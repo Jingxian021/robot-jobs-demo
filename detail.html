@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Detail — Robot Works</title>
+  <meta name="description" content="View details and apply for a robotics role." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=20260929" />
+</head>
+<body data-page="detail">
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">Robot Works</a>
+      <nav class="nav">
+        <div class="lang-switcher">
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="ja">日本語</button>
+          <button class="lang-btn" data-lang="zh">中文</button>
+          <button class="lang-btn" data-lang="de">DE</button>
+        </div>
+        <a href="compare.html" class="compare-chip" id="compare-chip" title="Compare selected jobs">
+          <span data-i18n="nav_compare">Compare</span> <span class="count">0</span>
+        </a>
+        <a href="index.html" class="nav-link" data-i18n="nav_jobs">Jobs</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-header">
+    <div class="container">
+      <button class="btn btn-outline detail-back-btn" id="detail-back" data-i18n="detail_back">← Back</button>
+      <h1 class="detail-title" id="detail-title">Loading…</h1>
+      <p class="detail-company" id="detail-company"></p>
+      <div class="detail-meta">
+        <span class="detail-meta-item" id="detail-location"></span>
+        <span class="detail-meta-item" id="detail-salary"></span>
+        <span class="detail-meta-item" id="detail-yoe"></span>
+        <span class="detail-meta-item" id="detail-category"></span>
+      </div>
+    </div>
+  </div>
+
+  <main class="container section" id="detail-content">
+    <div class="detail-grid">
+      <div class="detail-description" id="detail-description"></div>
+      <aside class="detail-sidebar">
+        <div class="sidebar-card">
+          <button class="btn btn-outline" id="sidebar-back" style="width:100%" data-i18n="detail_back">← Back</button>
+        </div>
+        <div class="sidebar-card">
+          <h4 data-i18n="detail_apply">Apply</h4>
+          <a id="detail-apply" href="#" target="_blank" rel="noopener" class="btn btn-primary" style="width:100%" data-i18n="detail_apply">Apply on company site</a>
+          <p class="apply-source" id="detail-source"></p>
+        </div>
+        <div class="sidebar-card">
+          <h4 data-i18n="detail_actions">Actions</h4>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn btn-outline" id="detail-save">Save</button>
+            <button class="btn btn-outline" id="detail-select">Select for compare</button>
+          </div>
+        </div>
+        <div class="sidebar-card">
+          <h4 data-i18n="detail_status">Listing status</h4>
+          <p class="value text-small"><span data-i18n="detail_posted">Posted</span> <span id="detail-posted"></span></p>
+          <p class="text-small text-tertiary mt-md"><span data-i18n="detail_verified">Verified</span> <span id="detail-verified"></span></p>
+          <p class="text-small text-tertiary mt-md"><a href="#" data-i18n="detail_report">Report outdated info</a></p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <section class="related-jobs container">
+    <h3 data-i18n="detail_related">Related roles</h3>
+    <div id="related-list" class="job-list"></div>
+  </section>
+
+  <div class="compare-bar" id="compare-bar">
+    <div class="container">
+      <div class="compare-thumbs"></div>
+      <span class="compare-count text-small text-secondary">0 selected</span>
+      <div class="compare-bar-actions">
+        <button class="btn btn-ghost compare-clear" data-i18n="compare_clear">Clear all</button>
+        <button class="btn btn-primary compare-open" data-i18n="compare_open">Compare now</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span data-i18n="footer_demo">© 2026 Robot Works. Demo only.</span>
+        <span><a href="index.html" data-i18n="back_to_jobs">Back to jobs</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js?v=20260929"></script>
+</body>
+</html>

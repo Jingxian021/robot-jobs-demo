@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compare — Robot Works</title>
+  <meta name="description" content="Compare selected robotics roles side by side." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=20260929" />
+</head>
+<body data-page="compare">
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">Robot Works</a>
+      <nav class="nav">
+        <div class="lang-switcher">
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="ja">日本語</button>
+          <button class="lang-btn" data-lang="zh">中文</button>
+          <button class="lang-btn" data-lang="de">DE</button>
+        </div>
+        <a href="index.html" class="nav-link" data-i18n="nav_jobs">Jobs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container section">
+    <div class="compare-header">
+      <div>
+        <a href="javascript:history.back()" class="back-link" data-i18n="detail_back">← Back</a>
+        <h1 class="compare-title" data-i18n="compare_title">Compare roles</h1>
+      </div>
+      <div style="display:flex;gap:0.5rem;">
+        <a href="index.html" class="btn btn-outline" data-i18n="compare_add">Add jobs</a>
+        <button class="btn btn-ghost" id="compare-clear" data-i18n="compare_clear">Clear all</button>
+      </div>
+    </div>
+    <div id="compare-content"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span data-i18n="footer_demo">© 2026 Robot Works. Demo only.</span>
+        <span><a href="index.html" data-i18n="footer_back">Back to jobs</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js?v=20260929"></script>
+</body>
+</html>

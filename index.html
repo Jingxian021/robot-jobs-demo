@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robot Works — Robotics Industry Job Board</title>
+  <meta name="description" content="Find and compare open roles across robotics companies and research labs.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home">
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">Robot Works</a>
+      <nav class="nav">
+        <div class="lang-switcher">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="ja">日本語</button>
+          <button class="lang-btn" data-lang="zh">中文</button>
+          <button class="lang-btn" data-lang="de">DE</button>
+        </div>
+        <a href="compare.html" class="compare-chip hidden" id="compare-chip" title="Compare selected jobs">
+          <span data-i18n="nav_compare">nav_compare</span> <span class="count">0</span>
+        </a>
+        <a href="#footer" class="nav-link" data-i18n="nav_about">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content" style="position: relative;">
+        <p class="hero-eyebrow text-mono" data-i18n="hero_eyebrow">hero_eyebrow</p>
+        <h1 class="hero-title" data-i18n="hero_title">hero_title</h1>
+        <p class="hero-body" data-i18n="hero_body">hero_body</p>
+        <a href="#list" class="btn btn-primary" data-i18n="hero_cta">hero_cta</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="search-bar">
+    <div class="container">
+      <div class="search-row">
+        <div class="filter">
+          <label for="filter-date" data-i18n="filter_date">filter_date</label>
+          <select id="filter-date">
+            <option value="" data-i18n="date_any">date_any</option>
+            <option value="week" data-i18n="date_week">date_week</option>
+            <option value="month" data-i18n="date_month">date_month</option>
+          </select>
+        </div>
+        <div class="filter">
+          <label for="filter-location" data-i18n="filter_location">filter_location</label>
+          <input type="text" id="filter-location" data-i18n-ph="filter_location" placeholder="Location">
+        </div>
+        <div class="filter">
+          <label for="filter-position" data-i18n="filter_position">filter_position</label>
+          <select id="filter-position">
+            <option value="" data-i18n="pos_all">pos_all</option>
+            <option value="Mechanical Engineering">Mechanical Engineering</option>
+            <option value="Electrical Engineering">Electrical Engineering</option>
+            <option value="Embedded Systems">Embedded Systems</option>
+            <option value="Firmware">Firmware</option>
+            <option value="Controls">Controls</option>
+            <option value="Motion Planning">Motion Planning</option>
+            <option value="SLAM">SLAM</option>
+            <option value="Perception">Perception</option>
+            <option value="Machine Learning">Machine Learning</option>
+            <option value="Software Infrastructure">Software Infrastructure</option>
+            <option value="Product Management">Product Management</option>
+            <option value="Technical Program Management">Technical Program Management</option>
+            <option value="Operations">Operations</option>
+            <option value="Testing and Validation">Testing and Validation</option>
+            <option value="Technical Sales">Technical Sales</option>
+            <option value="Research Scientist">Research Scientist</option>
+          </select>
+        </div>
+        <div class="filter">
+          <label for="filter-salary" data-i18n="filter_salary">filter_salary</label>
+          <select id="filter-salary">
+            <option value="" data-i18n="sal_any">sal_any</option>
+            <option value="80000">80k+</option>
+            <option value="120000">120k+</option>
+            <option value="180000">180k+</option>
+            <option value="220000">220k+</option>
+          </select>
+        </div>
+        <div class="filter">
+          <label for="filter-yoe" data-i18n="filter_yoe">filter_yoe</label>
+          <select id="filter-yoe">
+            <option value="" data-i18n="yoe_any">yoe_any</option>
+            <option value="0–2" data-i18n="yoe_02">yoe_02</option>
+            <option value="3–5" data-i18n="yoe_35">yoe_35</option>
+            <option value="6–10" data-i18n="yoe_610">yoe_610</option>
+            <option value="10+" data-i18n="yoe_10p">yoe_10p</option>
+          </select>
+        </div>
+      </div>
+      <div class="search-meta">
+        <div class="active-filters">
+          <span id="results-count">24 jobs</span>
+          <span id="active-filter-count" class="text-tertiary"></span>
+        </div>
+        <div class="search-actions">
+          <button class="btn btn-ghost sort-toggle" id="sort-toggle" title="Toggle sort order">
+            <span id="sort-icon">↓</span> <span id="sort-label" data-i18n="sort_newest">sort_newest</span>
+          </button>
+          <button class="btn btn-ghost" id="saved-toggle">
+            <span data-i18n="saved_toggle">saved_toggle</span> <span class="saved-count">0</span>
+          </button>
+          <button class="btn btn-ghost" id="reset-filters" data-i18n="reset_filters">reset_filters</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main id="list" class="container section">
+    <div id="job-list" class="job-list">
+    <article class="job-row" data-id="job-6">
+      <div class="job-main">
+        <a href="detail.html?id=job-6" class="job-title">Test Operations Lead</a>
+        <div class="job-company">Unitree</div>
+      </div>
+      <div class="job-cell">Hangzhou, China</div>
+      <div class="job-cell">CNY 68k – 89k/mo</div>
+      <div class="job-category">Operations</div>
+      <div class="job-date">Yesterday</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-6">Save</button>
+        <button class="action-btn select-btn " data-id="job-6">Select</button>
+        <button class="action-btn compare-btn" data-id="job-6">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-13">
+      <div class="job-main">
+        <a href="detail.html?id=job-13" class="job-title">Firmware Engineer</a>
+        <div class="job-company">ABB Robotics</div>
+      </div>
+      <div class="job-cell">Zurich, Switzerland</div>
+      <div class="job-cell">CHF 162k – 279k/yr</div>
+      <div class="job-category">Firmware</div>
+      <div class="job-date">Yesterday</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-13">Save</button>
+        <button class="action-btn select-btn " data-id="job-13">Select</button>
+        <button class="action-btn compare-btn" data-id="job-13">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-17">
+      <div class="job-main">
+        <a href="detail.html?id=job-17" class="job-title">MPC Engineer</a>
+        <div class="job-company">Unitree</div>
+      </div>
+      <div class="job-cell">Hangzhou, China</div>
+      <div class="job-cell">CNY 35k – 51k/mo</div>
+      <div class="job-category">Controls</div>
+      <div class="job-date">Yesterday</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-17">Save</button>
+        <button class="action-btn select-btn " data-id="job-17">Select</button>
+        <button class="action-btn compare-btn" data-id="job-17">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-5">
+      <div class="job-main">
+        <a href="detail.html?id=job-5" class="job-title">Robotics Infrastructure Engineer</a>
+        <div class="job-company">Boston Dynamics</div>
+      </div>
+      <div class="job-cell">Waltham, United States</div>
+      <div class="job-cell">USD 124k – 191k/yr</div>
+      <div class="job-category">Software Infrastructure</div>
+      <div class="job-date">2d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-5">Save</button>
+        <button class="action-btn select-btn " data-id="job-5">Select</button>
+        <button class="action-btn compare-btn" data-id="job-5">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-2">
+      <div class="job-main">
+        <a href="detail.html?id=job-2" class="job-title">Technical Account Manager</a>
+        <div class="job-company">Tesla Robotics</div>
+      </div>
+      <div class="job-cell">Palo Alto, United States</div>
+      <div class="job-cell">USD 112k – 191k/yr</div>
+      <div class="job-category">Technical Sales</div>
+      <div class="job-date">4d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-2">Save</button>
+        <button class="action-btn select-btn " data-id="job-2">Select</button>
+        <button class="action-btn compare-btn" data-id="job-2">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-15">
+      <div class="job-main">
+        <a href="detail.html?id=job-15" class="job-title">Motion Planning Engineer</a>
+        <div class="job-company">Skydio</div>
+      </div>
+      <div class="job-cell">San Mateo, United States</div>
+      <div class="job-cell">USD 86k – 126k/yr</div>
+      <div class="job-category">Motion Planning</div>
+      <div class="job-date">8d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-15">Save</button>
+        <button class="action-btn select-btn " data-id="job-15">Select</button>
+        <button class="action-btn compare-btn" data-id="job-15">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-16">
+      <div class="job-main">
+        <a href="detail.html?id=job-16" class="job-title">Firmware Engineer</a>
+        <div class="job-company">Tesla Robotics</div>
+      </div>
+      <div class="job-cell">Palo Alto, United States</div>
+      <div class="job-cell">USD 204k – 281k/yr</div>
+      <div class="job-category">Firmware</div>
+      <div class="job-date">8d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-16">Save</button>
+        <button class="action-btn select-btn " data-id="job-16">Select</button>
+        <button class="action-btn compare-btn" data-id="job-16">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-4">
+      <div class="job-main">
+        <a href="detail.html?id=job-4" class="job-title">Learning-Based Control Engineer</a>
+        <div class="job-company">Skydio</div>
+      </div>
+      <div class="job-cell">San Mateo, United States</div>
+      <div class="job-cell">USD 164k – 282k/yr</div>
+      <div class="job-category">Machine Learning</div>
+      <div class="job-date">9d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-4">Save</button>
+        <button class="action-btn select-btn " data-id="job-4">Select</button>
+        <button class="action-btn compare-btn" data-id="job-4">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-19">
+      <div class="job-main">
+        <a href="detail.html?id=job-19" class="job-title">Actuator Engineer</a>
+        <div class="job-company">FANUC</div>
+      </div>
+      <div class="job-cell">Oshino, Japan</div>
+      <div class="job-cell">JPY 159,486 – 200,849/yr</div>
+      <div class="job-category">Mechanical Engineering</div>
+      <div class="job-date">10d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-19">Save</button>
+        <button class="action-btn select-btn " data-id="job-19">Select</button>
+        <button class="action-btn compare-btn" data-id="job-19">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-1">
+      <div class="job-main">
+        <a href="detail.html?id=job-1" class="job-title">Power Electronics Engineer</a>
+        <div class="job-company">DJI</div>
+      </div>
+      <div class="job-cell">Shenzhen, China</div>
+      <div class="job-cell">CNY 48k – 75k/mo</div>
+      <div class="job-category">Electrical Engineering</div>
+      <div class="job-date">11d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-1">Save</button>
+        <button class="action-btn select-btn " data-id="job-1">Select</button>
+        <button class="action-btn compare-btn" data-id="job-1">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-11">
+      <div class="job-main">
+        <a href="detail.html?id=job-11" class="job-title">RTOS Engineer</a>
+        <div class="job-company">Tesla Robotics</div>
+      </div>
+      <div class="job-cell">Palo Alto, United States</div>
+      <div class="job-cell">USD 225k – 289k/yr</div>
+      <div class="job-category">Embedded Systems</div>
+      <div class="job-date">11d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-11">Save</button>
+        <button class="action-btn select-btn " data-id="job-11">Select</button>
+        <button class="action-btn compare-btn" data-id="job-11">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-12">
+      <div class="job-main">
+        <a href="detail.html?id=job-12" class="job-title">TPM, Robotics</a>
+        <div class="job-company">ABB Robotics</div>
+      </div>
+      <div class="job-cell">Zurich, Switzerland</div>
+      <div class="job-cell">CHF 109k – 167k/yr</div>
+      <div class="job-category">Technical Program Management</div>
+      <div class="job-date">11d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-12">Save</button>
+        <button class="action-btn select-btn " data-id="job-12">Select</button>
+        <button class="action-btn compare-btn" data-id="job-12">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-8">
+      <div class="job-main">
+        <a href="detail.html?id=job-8" class="job-title">Solutions Engineer</a>
+        <div class="job-company">Tesla Robotics</div>
+      </div>
+      <div class="job-cell">Palo Alto, United States</div>
+      <div class="job-cell">USD 150k – 224k/yr</div>
+      <div class="job-category">Technical Sales</div>
+      <div class="job-date">12d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-8">Save</button>
+        <button class="action-btn select-btn " data-id="job-8">Select</button>
+        <button class="action-btn compare-btn" data-id="job-8">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-18">
+      <div class="job-main">
+        <a href="detail.html?id=job-18" class="job-title">Firmware Engineer</a>
+        <div class="job-company">Tesla Robotics</div>
+      </div>
+      <div class="job-cell">Palo Alto, United States</div>
+      <div class="job-cell">USD 173k – 255k/yr</div>
+      <div class="job-category">Firmware</div>
+      <div class="job-date">16d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-18">Save</button>
+        <button class="action-btn select-btn " data-id="job-18">Select</button>
+        <button class="action-btn compare-btn" data-id="job-18">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-3">
+      <div class="job-main">
+        <a href="detail.html?id=job-3" class="job-title">Motion Planning Engineer</a>
+        <div class="job-company">Boston Dynamics</div>
+      </div>
+      <div class="job-cell">Waltham, United States</div>
+      <div class="job-cell">USD 210k – 321k/yr</div>
+      <div class="job-category">Motion Planning</div>
+      <div class="job-date">18d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-3">Save</button>
+        <button class="action-btn select-btn " data-id="job-3">Select</button>
+        <button class="action-btn compare-btn" data-id="job-3">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-24">
+      <div class="job-main">
+        <a href="detail.html?id=job-24" class="job-title">Test Engineer</a>
+        <div class="job-company">Boston Dynamics</div>
+      </div>
+      <div class="job-cell">Waltham, United States</div>
+      <div class="job-cell">USD 231k – 349k/yr</div>
+      <div class="job-category">Testing and Validation</div>
+      <div class="job-date">18d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-24">Save</button>
+        <button class="action-btn select-btn " data-id="job-24">Select</button>
+        <button class="action-btn compare-btn" data-id="job-24">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-9">
+      <div class="job-main">
+        <a href="detail.html?id=job-9" class="job-title">Simulation Engineer</a>
+        <div class="job-company">DJI</div>
+      </div>
+      <div class="job-cell">Shenzhen, China</div>
+      <div class="job-cell">CNY 66k – 95k/mo</div>
+      <div class="job-category">Software Infrastructure</div>
+      <div class="job-date">20d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-9">Save</button>
+        <button class="action-btn select-btn " data-id="job-9">Select</button>
+        <button class="action-btn compare-btn" data-id="job-9">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-10">
+      <div class="job-main">
+        <a href="detail.html?id=job-10" class="job-title">TPM, Robotics</a>
+        <div class="job-company">KUKA</div>
+      </div>
+      <div class="job-cell">Augsburg, Germany</div>
+      <div class="job-cell">EUR 214k – 328k/yr</div>
+      <div class="job-category">Technical Program Management</div>
+      <div class="job-date">20d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-10">Save</button>
+        <button class="action-btn select-btn " data-id="job-10">Select</button>
+        <button class="action-btn compare-btn" data-id="job-10">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-7">
+      <div class="job-main">
+        <a href="detail.html?id=job-7" class="job-title">Power Electronics Engineer</a>
+        <div class="job-company">Covariant</div>
+      </div>
+      <div class="job-cell">Berkeley, United States</div>
+      <div class="job-cell">USD 106k – 132k/yr</div>
+      <div class="job-category">Electrical Engineering</div>
+      <div class="job-date">22d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-7">Save</button>
+        <button class="action-btn select-btn " data-id="job-7">Select</button>
+        <button class="action-btn compare-btn" data-id="job-7">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-23">
+      <div class="job-main">
+        <a href="detail.html?id=job-23" class="job-title">Electrical Engineer</a>
+        <div class="job-company">Figure AI</div>
+      </div>
+      <div class="job-cell">Sunnyvale, United States</div>
+      <div class="job-cell">USD 203k – 279k/yr</div>
+      <div class="job-category">Electrical Engineering</div>
+      <div class="job-date">22d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-23">Save</button>
+        <button class="action-btn select-btn " data-id="job-23">Select</button>
+        <button class="action-btn compare-btn" data-id="job-23">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-14">
+      <div class="job-main">
+        <a href="detail.html?id=job-14" class="job-title">Electrical Engineer</a>
+        <div class="job-company">Nuro</div>
+      </div>
+      <div class="job-cell">Mountain View, United States</div>
+      <div class="job-cell">USD 94k – 124k/yr</div>
+      <div class="job-category">Electrical Engineering</div>
+      <div class="job-date">25d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-14">Save</button>
+        <button class="action-btn select-btn " data-id="job-14">Select</button>
+        <button class="action-btn compare-btn" data-id="job-14">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-21">
+      <div class="job-main">
+        <a href="detail.html?id=job-21" class="job-title">Test Engineer</a>
+        <div class="job-company">Skydio</div>
+      </div>
+      <div class="job-cell">San Mateo, United States</div>
+      <div class="job-cell">USD 155k – 222k/yr</div>
+      <div class="job-category">Testing and Validation</div>
+      <div class="job-date">25d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-21">Save</button>
+        <button class="action-btn select-btn " data-id="job-21">Select</button>
+        <button class="action-btn compare-btn" data-id="job-21">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-22">
+      <div class="job-main">
+        <a href="detail.html?id=job-22" class="job-title">Path Planning Lead</a>
+        <div class="job-company">Unitree</div>
+      </div>
+      <div class="job-cell">Hangzhou, China</div>
+      <div class="job-cell">CNY 78k – 120k/mo</div>
+      <div class="job-category">Motion Planning</div>
+      <div class="job-date">27d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-22">Save</button>
+        <button class="action-btn select-btn " data-id="job-22">Select</button>
+        <button class="action-btn compare-btn" data-id="job-22">Compare</button>
+      </div>
+    </article>
+    <article class="job-row" data-id="job-20">
+      <div class="job-main">
+        <a href="detail.html?id=job-20" class="job-title">Robotics ML Engineer</a>
+        <div class="job-company">ABB Robotics <span class="badge badge-closed">Closed</span></div>
+      </div>
+      <div class="job-cell">Zurich, Switzerland</div>
+      <div class="job-cell">CHF 108k – 183k/yr</div>
+      <div class="job-category">Machine Learning</div>
+      <div class="job-date">29d ago</div>
+      <div class="job-actions">
+        <button class="action-btn save-btn " data-id="job-20">Save</button>
+        <button class="action-btn select-btn " data-id="job-20">Select</button>
+        <button class="action-btn compare-btn" data-id="job-20">Compare</button>
+      </div>
+    </article></div>
+  </main>
+
+  <button class="back-to-top visible" id="back-to-top" data-i18n="back_to_top" title="Back to top" style="font-size: 12px;">back_to_top</button>
+
+  <div class="compare-bar" id="compare-bar">
+    <div class="container">
+      <div class="compare-thumbs"></div>
+      <span class="compare-count text-small text-secondary">0 selected</span>
+      <div class="compare-bar-actions">
+        <button class="btn btn-ghost compare-clear" data-i18n="compare_clear">compare_clear</button>
+        <button class="btn btn-primary compare-open" data-i18n="compare_open">compare_open</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Robot Works</h4>
+          <p class="text-secondary text-small" data-i18n="footer_about">footer_about</p>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer_categories">footer_categories</h4>
+          <ul>
+            <li><a href="index.html" data-i18n="footer_allroles" style="position: relative;">footer_allroles</a></li>
+            <li><a href="?position=Controls">Controls</a></li>
+            <li><a href="?position=Perception">Perception</a></li>
+            <li><a href="?position=SLAM">SLAM</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer_regions">footer_regions</h4>
+          <ul>
+            <li><a href="?location=United%20States">United States</a></li>
+            <li><a href="?location=China">China</a></li>
+            <li><a href="?location=Germany">Germany</a></li>
+            <li><a href="?location=Japan">Japan</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer_employers">footer_employers</h4>
+          <ul>
+            <li><a href="mailto:hello@robotworks.example.com" data-i18n="footer_postjob">footer_postjob</a></li>
+            <li><a href="#" data-i18n="footer_policy">footer_policy</a></li>
+            <li><a href="#" data-i18n="footer_contact">footer_contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom" style="position: relative;">
+        <span data-i18n="footer_demo">footer_demo</span>
+        <span data-i18n="footer_data">footer_data</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+
+
+
+</body></html>
