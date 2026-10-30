@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saved — Robot Works</title>
+  <meta name="description" content="Jobs and companies you saved on this device." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=20261029" />
+</head>
+<body data-page="saved">
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">Robot Works</a>
+      <nav class="nav">
+        <div class="lang-switcher">
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="ja">日本語</button>
+          <button class="lang-btn" data-lang="zh">中文</button>
+          <button class="lang-btn" data-lang="de">DE</button>
+        </div>
+        <a href="compare.html" class="compare-chip hidden" id="compare-chip" title="Compare selected jobs">
+          <span data-i18n="nav_compare">Compare</span> <span class="count">0</span>
+        </a>
+        <a href="index.html" class="nav-link" data-i18n="nav_jobs">Jobs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container section">
+    <div class="saved-hero">
+      <a href="index.html" class="back-link" data-i18n="detail_back">← Back</a>
+      <h1 class="saved-title" data-i18n="saved_title">Saved</h1>
+      <p class="saved-subtitle text-secondary" data-i18n="saved_subtitle">Jobs and companies you saved on this device.</p>
+    </div>
+
+    <section class="saved-section">
+      <h2 class="saved-heading" data-i18n="saved_jobs_heading">Saved jobs</h2>
+      <div id="saved-jobs" class="job-list"></div>
+      <p id="saved-jobs-empty" class="saved-empty text-tertiary" data-i18n="saved_jobs_empty">No saved jobs yet.</p>
+    </section>
+
+    <section class="saved-section">
+      <h2 class="saved-heading" data-i18n="saved_companies_heading">Followed companies</h2>
+      <div id="saved-companies" class="company-list"></div>
+      <p id="saved-companies-empty" class="saved-empty text-tertiary" data-i18n="saved_companies_empty">No followed companies yet.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span data-i18n="footer_demo">© 2026 Robot Works. Demo only.</span>
+        <span>
+          <a href="#" data-rb-cookie data-i18n="cookie_settings">Cookie settings</a>
+          <a href="index.html" data-i18n="footer_back">Back to jobs</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/analytics.js?v=20261029"></script>
+  <script src="js/app.js?v=20261029"></script>
+</body>
+</html>

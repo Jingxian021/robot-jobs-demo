@@ -984,3 +984,18 @@ h1, h2, h3, h4 {
     display: none;
   }
 }
+
+/* ── Saved page ──────────────────────────────────────── */
+.saved-hero { padding: 2rem 0 1.5rem; }
+.back-link { font-size: 0.875rem; color: var(--ink-secondary); display: inline-block; margin-bottom: 1rem; }
+.saved-title { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+.saved-subtitle { font-size: 0.95rem; }
+.saved-section { margin-top: 2.5rem; }
+.saved-heading { font-size: 0.8125rem; font-family: var(--mono, monospace); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-tertiary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+.saved-empty { font-size: 0.875rem; padding: 1rem 0; }
+
+.company-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.75rem; }
+.company-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.25rem; border: 1px solid var(--border); border-radius: 2px; background: var(--surface); }
+.company-name { font-weight: 600; font-size: 0.95rem; }
+.company-meta { margin-top: 0.25rem; }
+.company-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }

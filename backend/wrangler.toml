@@ -1,0 +1,36 @@
+name = "robot-works-analytics"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+# ── Configuration ────────────────────────────────────────────
+# 1) Create the database:  npx wrangler d1 create robot_works
+# 2) Paste the returned database_id below.
+# 3) Set the admin token:  npx wrangler secret put ADMIN_TOKEN
+#    (Used only when Cloudflare Access is not configured.)
+# 4) Put the Worker URL into the frontend:
+#    index.html / detail.html / compare.html / saved.html
+#    <meta name="rb-api" content="https://robot-works-analytics.<you>.workers.dev">
+#
+# NOTE: the Worker must be reachable from the browser, so keep workers.dev
+# enabled or attach a custom domain. Cloudflare Access (Zero Trust) should
+# protect the /dashboard path only.
+
+[vars]
+POLICY_VERSION = "2026-10-28"
+ALLOWED_ORIGINS = "https://jingxian021.github.io"
+RETENTION_DAYS = "365"
+
+# Optional: enable Cloudflare Access verification on /dashboard and /v1/dashboard/*
+# ACCESS_TEAM_DOMAIN = "your-team.cloudflareaccess.com"
+# ACCESS_AUD = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "robot_works"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+[triggers]
+crons = ["0 3 * * *"]
+
+[observability]
+enabled = true

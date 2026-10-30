@@ -4,6 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Robot Works — Robotics Industry Job Board</title>
   <meta name="description" content="Find and compare open roles across robotics companies and research labs.">
+  <meta name="rb-api" content="">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
@@ -23,6 +24,7 @@
         <a href="compare.html" class="compare-chip hidden" id="compare-chip" title="Compare selected jobs">
           <span data-i18n="nav_compare">nav_compare</span> <span class="count">0</span>
         </a>
+        <a href="saved.html" class="nav-link" data-i18n="nav_saved">Saved</a>
         <a href="#footer" class="nav-link" data-i18n="nav_about">About</a>
       </nav>
     </div>
@@ -41,6 +43,7 @@
 
   <section class="search-bar">
     <div class="container">
+      <input type="hidden" id="filter-company" value="">
       <div class="search-row">
         <div class="filter">
           <label for="filter-date" data-i18n="filter_date">filter_date</label>
@@ -528,13 +531,15 @@
       </div>
       <div class="footer-bottom" style="position: relative;">
         <span data-i18n="footer_demo">footer_demo</span>
-        <span data-i18n="footer_data">footer_data</span>
+        <span>
+          <a href="#" data-rb-cookie data-i18n="cookie_settings">Cookie settings</a>
+          <span data-i18n="footer_data">footer_data</span>
+        </span>
       </div>
     </div>
   </footer>
 
-  <script src="js/app.js"></script>
-
-
+  <script src="js/analytics.js?v=20261029"></script>
+  <script src="js/app.js?v=20261029"></script>
 
 </body></html>

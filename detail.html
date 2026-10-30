@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Job Detail — Robot Works</title>
   <meta name="description" content="View details and apply for a robotics role." />
+  <meta name="rb-api" content="" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -24,6 +25,7 @@
         <a href="compare.html" class="compare-chip" id="compare-chip" title="Compare selected jobs">
           <span data-i18n="nav_compare">Compare</span> <span class="count">0</span>
         </a>
+        <a href="saved.html" class="nav-link" data-i18n="nav_saved">Saved</a>
         <a href="index.html" class="nav-link" data-i18n="nav_jobs">Jobs</a>
       </nav>
     </div>
@@ -60,13 +62,14 @@
           <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
             <button class="btn btn-outline" id="detail-save">Save</button>
             <button class="btn btn-outline" id="detail-select">Select for compare</button>
+            <button class="btn btn-outline" id="detail-follow" data-i18n="follow_company">Follow company</button>
           </div>
         </div>
         <div class="sidebar-card">
           <h4 data-i18n="detail_status">Listing status</h4>
           <p class="value text-small"><span data-i18n="detail_posted">Posted</span> <span id="detail-posted"></span></p>
           <p class="text-small text-tertiary mt-md"><span data-i18n="detail_verified">Verified</span> <span id="detail-verified"></span></p>
-          <p class="text-small text-tertiary mt-md"><a href="#" data-i18n="detail_report">Report outdated info</a></p>
+          <p class="text-small text-tertiary mt-md"><a href="#" data-detail-report data-i18n="detail_report">Report outdated info</a></p>
         </div>
       </aside>
     </div>
@@ -92,11 +95,15 @@
     <div class="container">
       <div class="footer-bottom">
         <span data-i18n="footer_demo">© 2026 Robot Works. Demo only.</span>
-        <span><a href="index.html" data-i18n="back_to_jobs">Back to jobs</a></span>
+        <span>
+          <a href="#" data-rb-cookie data-i18n="cookie_settings">Cookie settings</a>
+          <a href="index.html" data-i18n="back_to_jobs">Back to jobs</a>
+        </span>
       </div>
     </div>
   </footer>
 
-  <script src="js/app.js?v=20260929"></script>
+  <script src="js/analytics.js?v=20261029"></script>
+  <script src="js/app.js?v=20261029"></script>
 </body>
 </html>

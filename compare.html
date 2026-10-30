@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Compare — Robot Works</title>
   <meta name="description" content="Compare selected robotics roles side by side." />
+  <meta name="rb-api" content="" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -21,6 +22,7 @@
           <button class="lang-btn" data-lang="zh">中文</button>
           <button class="lang-btn" data-lang="de">DE</button>
         </div>
+        <a href="saved.html" class="nav-link" data-i18n="nav_saved">Saved</a>
         <a href="index.html" class="nav-link" data-i18n="nav_jobs">Jobs</a>
       </nav>
     </div>
@@ -44,11 +46,15 @@
     <div class="container">
       <div class="footer-bottom">
         <span data-i18n="footer_demo">© 2026 Robot Works. Demo only.</span>
-        <span><a href="index.html" data-i18n="footer_back">Back to jobs</a></span>
+        <span>
+          <a href="#" data-rb-cookie data-i18n="cookie_settings">Cookie settings</a>
+          <a href="index.html" data-i18n="footer_back">Back to jobs</a>
+        </span>
       </div>
     </div>
   </footer>
 
-  <script src="js/app.js?v=20260929"></script>
+  <script src="js/analytics.js?v=20261029"></script>
+  <script src="js/app.js?v=20261029"></script>
 </body>
 </html>

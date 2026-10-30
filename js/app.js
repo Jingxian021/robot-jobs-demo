@@ -99,6 +99,20 @@ const I18N = {
     limit_msg: 'Compare is limited to 4 jobs. Remove one to add another.',
     back_to_top: 'Back to top',
     back_to_jobs: 'Back to jobs',
+    nav_saved: 'Saved',
+    cookie_settings: 'Cookie settings',
+    follow_company: 'Follow company',
+    following: 'Following',
+    saved_title: 'Saved',
+    saved_subtitle: 'Jobs and companies you saved on this device.',
+    saved_jobs_heading: 'Saved jobs',
+    saved_companies_heading: 'Followed companies',
+    saved_jobs_empty: 'No saved jobs yet. Tap Save on any role to keep it here.',
+    saved_companies_empty: 'No followed companies yet. Tap Follow company on a job detail page.',
+    saved_view_jobs: 'View jobs',
+    saved_remove: 'Remove',
+    open_role: 'open role',
+    open_roles: 'open roles',
   },
   ja: {
     _locale: 'ja-JP',
@@ -196,6 +210,20 @@ const I18N = {
     limit_msg: '比較は最大4件までです。1件削除してから追加してください。',
     back_to_top: 'トップへ戻る',
     back_to_jobs: '求人一覧に戻る',
+    nav_saved: '保存',
+    cookie_settings: 'Cookie 設定',
+    follow_company: '企業をフォロー',
+    following: 'フォロー中',
+    saved_title: '保存',
+    saved_subtitle: 'この端末で保存した求人と企業です。',
+    saved_jobs_heading: '保存した求人',
+    saved_companies_heading: 'フォロー中の企業',
+    saved_jobs_empty: 'まだ保存した求人はありません。求人の「保存」をタップしてください。',
+    saved_companies_empty: 'まだフォロー中の企業はありません。詳細ページで「企業をフォロー」をタップしてください。',
+    saved_view_jobs: '求人を見る',
+    saved_remove: '削除',
+    open_role: '件の求人',
+    open_roles: '件の求人',
   },
   zh: {
     _locale: 'zh-CN',
@@ -293,6 +321,20 @@ const I18N = {
     limit_msg: '最多比较 4 个职位。请先移除一个再添加。',
     back_to_top: '返回顶部',
     back_to_jobs: '返回职位列表',
+    nav_saved: '收藏',
+    cookie_settings: 'Cookie 设置',
+    follow_company: '关注公司',
+    following: '已关注',
+    saved_title: '收藏',
+    saved_subtitle: '你在本设备上收藏的职位和公司。',
+    saved_jobs_heading: '收藏的职位',
+    saved_companies_heading: '关注的公司',
+    saved_jobs_empty: '还没有收藏的职位。点击任意职位的"收藏"即可在此查看。',
+    saved_companies_empty: '还没有关注的公司。在职位详情页点击"关注公司"即可。',
+    saved_view_jobs: '查看职位',
+    saved_remove: '移除',
+    open_role: '个在招职位',
+    open_roles: '个在招职位',
   },
   de: {
     _locale: 'de-DE',
@@ -390,6 +432,20 @@ const I18N = {
     limit_msg: 'Vergleich ist auf 4 Jobs begrenzt. Entferne einen, um einen weiteren hinzuzufügen.',
     back_to_top: 'Nach oben',
     back_to_jobs: 'Zurück zu Jobs',
+    nav_saved: 'Gespeichert',
+    cookie_settings: 'Cookie-Einstellungen',
+    follow_company: 'Unternehmen folgen',
+    following: 'Gefolgt',
+    saved_title: 'Gespeichert',
+    saved_subtitle: 'Jobs und Unternehmen, die Sie auf diesem Gerät gespeichert haben.',
+    saved_jobs_heading: 'Gespeicherte Jobs',
+    saved_companies_heading: 'Gefolgte Unternehmen',
+    saved_jobs_empty: 'Noch keine gespeicherten Jobs. Tippen Sie auf „Speichern“ bei einer Stelle.',
+    saved_companies_empty: 'Noch keine gefolgten Unternehmen. Tippen Sie auf einer Detailseite auf „Unternehmen folgen“.',
+    saved_view_jobs: 'Jobs ansehen',
+    saved_remove: 'Entfernen',
+    open_role: 'offene Stelle',
+    open_roles: 'offene Stellen',
   },
 };
 
@@ -423,8 +479,23 @@ function applyStaticI18n() {
 const STORAGE_KEYS = {
   compare: 'rb_compare_jobs',
   saved: 'rb_saved_jobs',
+  companies: 'rb_saved_companies',
   lang: 'rb_lang',
 };
+
+/* ── Anonymous analytics (no-op if analytics.js absent / consent denied) ─ */
+function track(name, props, jobId, company) {
+  try { if (window.RB && window.RB.track) window.RB.track(name, props, jobId, company); } catch (_) {}
+}
+
+function getSavedCompanies() { return new Set(getStorage(STORAGE_KEYS.companies)); }
+function setSavedCompanies(s) { setStorage(STORAGE_KEYS.companies, Array.from(s)); }
+function toggleSavedCompany(name) {
+  const s = getSavedCompanies();
+  if (s.has(name)) s.delete(name); else s.add(name);
+  setSavedCompanies(s);
+  return s.has(name);
+}
 
 const POSITIONS = [
   'Mechanical Engineering', 'Electrical Engineering', 'Embedded Systems', 'Firmware',
@@ -582,7 +653,7 @@ function timeAgo(days) {
 
 function readFiltersFromURL() {
   const p = new URLSearchParams(window.location.search);
-  return { date: p.get('date') || '', location: p.get('location') || '', position: p.get('position') || '', salary: p.get('salary') || '', yoe: p.get('yoe') || '' };
+  return { date: p.get('date') || '', location: p.get('location') || '', position: p.get('position') || '', salary: p.get('salary') || '', yoe: p.get('yoe') || '', company: p.get('company') || '' };
 }
 
 function writeFiltersToURL(filters) {
@@ -604,6 +675,7 @@ function filterJobs(jobs, filters) {
     if (filters.position && job.category !== filters.position) return false;
     if (filters.salary) { const min = parseInt(filters.salary, 10); if (job.salaryTop < min) return false; }
     if (filters.yoe && job.yoe !== filters.yoe) return false;
+    if (filters.company && job.company !== filters.company) return false;
     return true;
   });
 }
@@ -659,6 +731,8 @@ function attachJobActions(container) {
       btn.classList.toggle('active', nowSaved);
       btn.textContent = nowSaved ? t('saved') : t('save');
       updateSavedToggle();
+      track(nowSaved ? 'save_job' : 'unsave_job', null, id);
+      if (document.body.dataset.page === 'saved' && !nowSaved) initSaved(true);
     });
   });
 
@@ -666,12 +740,14 @@ function attachJobActions(container) {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const id = btn.dataset.id;
+      const wasIn = isInCompare(id);
       const ok = toggleCompare(id);
       if (!ok) return;
       btn.classList.toggle('active', isInCompare(id));
       btn.textContent = isInCompare(id) ? t('selected') : t('select');
       updateCompareBar();
       updateHeader();
+      track(wasIn ? 'compare_remove' : 'compare_add', null, id);
     });
   });
 
@@ -685,7 +761,15 @@ function attachJobActions(container) {
         s.add(id);
         setCompareSet(s);
       }
+      track('compare_open', { source: 'row' }, id);
       window.location.href = 'compare.html';
+    });
+  });
+
+  container.querySelectorAll('.job-title').forEach((a) => {
+    a.addEventListener('click', () => {
+      const id = a.closest('.job-row')?.dataset.id;
+      track('job_detail_open', null, id);
     });
   });
 }
@@ -717,7 +801,7 @@ function initCompareBar() {
       btn.textContent = t('select');
     });
   });
-  bar.querySelector('.compare-open')?.addEventListener('click', () => { window.location.href = 'compare.html'; });
+  bar.querySelector('.compare-open')?.addEventListener('click', () => { track('compare_open', { source: 'bar' }); window.location.href = 'compare.html'; });
   updateCompareBar();
 }
 
@@ -750,6 +834,7 @@ function initHome() {
     position: document.getElementById('filter-position'),
     salary: document.getElementById('filter-salary'),
     yoe: document.getElementById('filter-yoe'),
+    company: document.getElementById('filter-company'),
   };
 
   let filters = readFiltersFromURL();
@@ -774,10 +859,24 @@ function initHome() {
 
   Object.values(inputs).forEach((el) => { el?.addEventListener('input', apply); el?.addEventListener('change', apply); });
 
+  ['date', 'position', 'salary', 'yoe'].forEach((k) => {
+    inputs[k]?.addEventListener('change', () => {
+      track('filter_change', { field: k, value: inputs[k].value || 'any' });
+    });
+  });
+  let locationTimer;
+  inputs.location?.addEventListener('input', () => {
+    clearTimeout(locationTimer);
+    locationTimer = setTimeout(() => {
+      track('filter_change', { field: 'location', value: inputs.location.value ? 'typed' : 'cleared' });
+    }, 1200);
+  });
+
   function resetFilters() {
     Object.values(inputs).forEach((el) => { if (el) el.value = ''; });
     savedMode = false;
     document.getElementById('saved-toggle')?.classList.remove('active');
+    track('filter_reset');
     apply();
   }
 
@@ -789,6 +888,7 @@ function initHome() {
     const label = document.getElementById('sort-label');
     if (icon) icon.textContent = sortOrder === 'desc' ? '↓' : '↑';
     if (label) label.textContent = sortOrder === 'desc' ? t('sort_newest') : t('sort_oldest');
+    track('sort_change', { direction: sortOrder });
     apply();
   });
 
@@ -847,16 +947,20 @@ function initDetail() {
     <h3>${t('detail_req')}</h3>
     <ul>${job.requirements.map((r) => `<li>${r}</li>`).join('')}</ul>`;
 
+  track('job_detail_open', null, job.id, job.company);
+
   const selectBtn = document.getElementById('detail-select');
   selectBtn.textContent = isInCompare(job.id) ? t('selected') : t('detail_select_compare');
   selectBtn.classList.toggle('active', isInCompare(job.id));
   selectBtn.addEventListener('click', () => {
+    const wasIn = isInCompare(job.id);
     const ok = toggleCompare(job.id);
     if (!ok) return;
     selectBtn.classList.toggle('active', isInCompare(job.id));
     selectBtn.textContent = isInCompare(job.id) ? t('selected') : t('detail_select_compare');
     updateCompareBar();
     updateHeader();
+    track(wasIn ? 'compare_remove' : 'compare_add', null, job.id, job.company);
   });
 
   const saveBtn = document.getElementById('detail-save');
@@ -866,6 +970,28 @@ function initDetail() {
     const nowSaved = toggleSaved(job.id);
     saveBtn.classList.toggle('active', nowSaved);
     saveBtn.textContent = nowSaved ? t('saved') : t('save');
+    track(nowSaved ? 'save_job' : 'unsave_job', null, job.id, job.company);
+  });
+
+  const followBtn = document.getElementById('detail-follow');
+  if (followBtn) {
+    const followed = getSavedCompanies().has(job.company);
+    followBtn.textContent = followed ? t('following') : t('follow_company');
+    followBtn.classList.toggle('active', followed);
+    followBtn.addEventListener('click', () => {
+      const nowFollowed = toggleSavedCompany(job.company);
+      followBtn.classList.toggle('active', nowFollowed);
+      followBtn.textContent = nowFollowed ? t('following') : t('follow_company');
+      track(nowFollowed ? 'save_company' : 'unsave_company', null, job.id, job.company);
+    });
+  }
+
+  const applyBtn = document.getElementById('detail-apply');
+  applyBtn?.addEventListener('click', () => track('apply_click', { surface: 'detail' }, job.id, job.company));
+
+  document.querySelector('[data-detail-report]')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    track('report_listing', null, job.id, job.company);
   });
 
   const related = JOBS.filter((j) => j.category === job.category && j.id !== job.id).slice(0, 4);
@@ -926,8 +1052,10 @@ function initCompare() {
     container.querySelectorAll('.remove-job').forEach((btn) => {
       btn.addEventListener('click', () => {
         const idx = parseInt(btn.dataset.idx, 10);
+        const removed = selected[idx];
         selected.splice(idx, 1);
         setCompareSet(new Set(selected.map((j) => j.id)));
+        if (removed) track('compare_remove', null, removed.id, removed.company);
         updateHeader();
         if (selected.length < 2) {
           container.innerHTML = `
@@ -950,6 +1078,15 @@ function initCompare() {
         <p>${t('compare_cleared_body')}</p>
         <a href="index.html" class="btn btn-primary">${t('compare_browse')}</a>
       </div>`;
+  });
+
+  container.addEventListener('click', (e) => {
+    const apply = e.target.closest('.compare-apply');
+    if (apply) {
+      const idx = parseInt(apply.closest('th')?.querySelector('.remove-job')?.dataset.idx, 10);
+      const job = selected[idx];
+      if (job) track('compare_apply_click', null, job.id, job.company);
+    }
   });
 
   render();
@@ -1002,6 +1139,66 @@ function initDetailBack() {
   sideBtn?.addEventListener('click', safeBack);
 }
 
+/* ── Saved page (local only) ──────────────────────────── */
+
+function initSaved(isRefresh) {
+  if (!isRefresh) track('saved_page_view');
+  const jobsList = document.getElementById('saved-jobs');
+  const companiesList = document.getElementById('saved-companies');
+  const jobsEmpty = document.getElementById('saved-jobs-empty');
+  const companiesEmpty = document.getElementById('saved-companies-empty');
+
+  const savedIds = Array.from(getSavedSet());
+  const savedJobs = JOBS.filter((j) => savedIds.includes(j.id));
+  if (jobsList) {
+    if (savedJobs.length) {
+      jobsList.innerHTML = savedJobs.map(renderJobRow).join('');
+      attachJobActions(jobsList);
+      jobsEmpty?.classList.add('hidden');
+    } else {
+      jobsList.innerHTML = '';
+      jobsEmpty?.classList.remove('hidden');
+    }
+  }
+
+  const companies = Array.from(getSavedCompanies());
+  if (companiesList) {
+    if (companies.length) {
+      const counts = {};
+      JOBS.forEach((j) => { counts[j.company] = (counts[j.company] || 0) + 1; });
+      companiesList.innerHTML = companies.map((c) => {
+        const count = counts[c] || 0;
+        const q = encodeURIComponent(c);
+        return `
+          <article class="company-row">
+            <div class="company-main">
+              <div class="company-name">${c}</div>
+              <div class="company-meta text-tertiary text-small">${count} ${count === 1 ? t('open_role') : t('open_roles')}</div>
+            </div>
+            <div class="company-actions">
+              <a href="index.html?company=${q}" class="btn btn-outline" data-i18n="saved_view_jobs">${t('saved_view_jobs')}</a>
+              <button class="btn btn-ghost company-remove" data-company="${c}" data-i18n="saved_remove">${t('saved_remove')}</button>
+            </div>
+          </article>`;
+      }).join('');
+      companiesList.querySelectorAll('.company-remove').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const name = btn.dataset.company;
+          const s = getSavedCompanies();
+          s.delete(name);
+          setSavedCompanies(s);
+          track('unsave_company', null, null, name);
+          initSaved(true);
+        });
+      });
+      companiesEmpty?.classList.add('hidden');
+    } else {
+      companiesList.innerHTML = '';
+      companiesEmpty?.classList.remove('hidden');
+    }
+  }
+}
+
 /* ── Router ───────────────────────────────────────────── */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1011,4 +1208,5 @@ document.addEventListener('DOMContentLoaded', () => {
   if (page === 'home') { initHome(); initBackToTop(); }
   if (page === 'detail') { initDetail(); initDetailBack(); }
   if (page === 'compare') initCompare();
+  if (page === 'saved') initSaved();
 });

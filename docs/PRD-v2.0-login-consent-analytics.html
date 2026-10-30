@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robot Works v2.0 修改 PRD — 登录、同意管理、个人设置与数据监控</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --ink: #111111;
+    --ink-2: #4a4a4a;
+    --ink-3: #858585;
+    --line: #e4e4e4;
+    --line-strong: #111111;
+    --surface: #fafafa;
+    --surface-2: #f2f2f2;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans",
+            "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--ink); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: #000; }
+
+  /* ── Top bar ───────────────────────────────────────────── */
+  .topbar {
+    border-bottom: 1px solid var(--line);
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+  .topbar-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .brand {
+    font-weight: 600;
+    letter-spacing: -.02em;
+    font-size: 15px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .brand span { color: var(--ink-3); font-weight: 400; }
+  .topbar-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  /* ── Shell / layout ────────────────────────────────────── */
+  .shell {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px 140px;
+    display: grid;
+    grid-template-columns: 232px minmax(0, 1fr);
+    gap: 64px;
+    align-items: start;
+  }
+
+  .toc {
+    position: sticky;
+    top: 92px;
+    padding-top: 56px;
+    font-size: 12px;
+  }
+  .toc-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 14px;
+  }
+  .toc ol { list-style: none; margin: 0; padding: 0; }
+  .toc li { margin: 0; }
+  .toc a {
+    display: block;
+    padding: 5px 0 5px 12px;
+    border-left: 1px solid var(--line);
+    color: var(--ink-2);
+    text-decoration: none;
+    line-height: 1.45;
+  }
+  .toc a:hover { border-left-color: var(--ink); color: var(--ink); }
+  .toc .sub a { padding-left: 24px; font-size: 11px; color: var(--ink-3); }
+
+  main { min-width: 0; padding-top: 56px; }
+
+  /* ── Cover ─────────────────────────────────────────────── */
+  .cover { border-bottom: 1px solid var(--line-strong); padding-bottom: 40px; margin-bottom: 48px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 18px;
+  }
+  h1 {
+    font-size: clamp(32px, 4.4vw, 52px);
+    line-height: 1.06;
+    letter-spacing: -.045em;
+    font-weight: 600;
+    margin: 0 0 20px;
+    max-width: 900px;
+  }
+  .lede {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--ink-2);
+    max-width: 760px;
+    margin: 0 0 28px;
+  }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .meta-cell { padding: 14px 16px 14px 0; }
+  .meta-cell + .meta-cell { border-left: 1px solid var(--line); padding-left: 16px; }
+  .meta-key {
+    display: block;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+  }
+  .meta-val { font-size: 12px; font-weight: 500; }
+
+  /* ── Sections ──────────────────────────────────────────── */
+  section { margin-bottom: 64px; scroll-margin-top: 84px; }
+  h2 {
+    font-size: 26px;
+    line-height: 1.2;
+    letter-spacing: -.03em;
+    font-weight: 600;
+    margin: 0 0 8px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  h2 .num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    color: var(--ink-3);
+    font-weight: 400;
+    flex: 0 0 auto;
+    padding-top: 4px;
+  }
+  h3 {
+    font-size: 17px;
+    letter-spacing: -.015em;
+    font-weight: 600;
+    margin: 36px 0 10px;
+  }
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 24px 0 8px;
+  }
+  p { margin: 0 0 14px; }
+  .section-rule { height: 1px; background: var(--line); margin: 16px 0 24px; }
+  .muted { color: var(--ink-3); }
+  .small { font-size: 12px; line-height: 1.65; }
+  .mono { font-family: var(--mono); }
+  .nowrap { white-space: nowrap; }
+
+  ul, ol { margin: 0 0 16px; padding-left: 20px; }
+  li { margin: 6px 0; }
+  li::marker { color: var(--ink-3); }
+
+  /* ── Tables ────────────────────────────────────────────── */
+  .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin: 16px 0 24px;
+    border-top: 1px solid var(--line-strong);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    line-height: 1.6;
+    min-width: 620px;
+  }
+  th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    padding: 10px 12px 10px 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: bottom;
+    white-space: nowrap;
+  }
+  td {
+    padding: 11px 12px 11px 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    color: var(--ink-2);
+  }
+  td:first-child, th:first-child { padding-left: 0; }
+  td strong, td b { color: var(--ink); font-weight: 600; }
+  tbody tr:hover td { background: #fcfcfc; }
+  .t-col-narrow { width: 90px; }
+  .t-col-id { width: 92px; }
+  .t-col-wide { width: 34%; }
+
+  /* ── Callouts ──────────────────────────────────────────── */
+  .callout {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ink);
+    background: var(--surface);
+    padding: 16px 18px;
+    margin: 20px 0;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    border: 1px solid var(--ink);
+    padding: 1px 6px;
+    margin-right: 8px;
+    vertical-align: 1px;
+  }
+  .callout.blocker { border-left-color: #000; background: #f7f7f7; }
+  .callout.conflict { border-left-style: dashed; }
+  .callout.note { border-left-color: var(--ink-3); }
+
+  .summary {
+    border: 1px solid var(--line-strong);
+    padding: 22px 24px;
+    margin: 0 0 48px;
+  }
+  .summary h2 { font-size: 15px; margin-bottom: 14px; letter-spacing: 0; }
+  .summary ol { margin: 0; padding-left: 18px; }
+  .summary li { font-size: 13px; margin: 9px 0; color: var(--ink-2); }
+  .summary li strong { color: var(--ink); }
+
+  /* ── Flow / wireframe ──────────────────────────────────── */
+  pre.flow, pre.wire {
+    margin: 16px 0 24px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.75;
+    color: var(--ink-2);
+    overflow-x: auto;
+    tab-size: 2;
+  }
+  pre.wire { background: #fff; }
+  pre.flow b { color: var(--ink); font-weight: 600; }
+
+  /* ── Pills / badges ────────────────────────────────────── */
+  .pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    border: 1px solid var(--line-strong);
+    padding: 1px 6px;
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+  .pill.ghost { border-color: var(--line); color: var(--ink-3); }
+  .pill.solid { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  /* ── Checklist ─────────────────────────────────────────── */
+  .decision {
+    border-top: 1px solid var(--line-strong);
+    padding: 16px 0;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) 220px;
+    gap: 16px;
+    align-items: start;
+  }
+  .decision:last-of-type { border-bottom: 1px solid var(--line); }
+  .decision .d-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    padding-top: 3px;
+  }
+  .decision .d-title { font-weight: 600; font-size: 13.5px; margin-bottom: 3px; }
+  .decision .d-body { font-size: 12px; color: var(--ink-2); line-height: 1.65; }
+  .decision .d-rec {
+    font-size: 11.5px;
+    line-height: 1.55;
+    border-left: 1px solid var(--line);
+    padding-left: 14px;
+    color: var(--ink-2);
+  }
+  .decision .d-rec b { display: block; font-family: var(--mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; font-weight: 500; }
+
+  footer.doc-footer {
+    border-top: 1px solid var(--line-strong);
+    margin-top: 40px;
+    padding-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 960px) {
+    .topbar-inner { padding: 0 20px; }
+    .shell { grid-template-columns: 1fr; gap: 0; padding: 0 20px 100px; }
+    .toc {
+      position: static;
+      padding-top: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .toc ol { columns: 2; column-gap: 24px; }
+    .toc .sub { display: none; }
+    main { padding-top: 32px; }
+    .meta-grid { grid-template-columns: 1fr 1fr; }
+    .meta-cell:nth-child(3) { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); }
+    .meta-cell:nth-child(4) { border-top: 1px solid var(--line); }
+    .decision { grid-template-columns: 26px 1fr; }
+    .decision .d-rec { grid-column: 2; border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 8px; }
+  }
+
+  @media (max-width: 560px) {
+    .topbar-meta span:nth-child(2) { display: none; }
+    .toc ol { columns: 1; }
+    .meta-grid { grid-template-columns: 1fr; }
+    .meta-cell + .meta-cell { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); }
+    pre.flow, pre.wire { font-size: 10px; padding: 14px; }
+  }
+
+  @media print {
+    .topbar, .toc { display: none; }
+    .shell { display: block; padding: 0; }
+    section { page-break-inside: auto; }
+    h2, h3 { page-break-after: avoid; }
+    table, pre { page-break-inside: avoid; }
+    body { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#">Robot Works <span>/ PRD</span></a>
+    <div class="topbar-meta">
+      <span>v2.0 · Draft for review</span>
+      <span>2026-10-28</span>
+      <span>Internal</span>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+
+  <aside class="toc" aria-label="目录">
+    <div class="toc-label">Contents</div>
+    <ol>
+      <li><a href="#summary">评审摘要</a></li>
+      <li><a href="#background">1 · 背景与目标</a></li>
+      <li><a href="#conflict">2 · 版本演进与边界</a></li>
+      <li><a href="#scope">3 · 范围</a></li>
+      <li><a href="#model">4 · 角色、对象与状态</a></li>
+      <li><a href="#flows">5 · 核心流程</a></li>
+      <li><a href="#fr-auth">6.1 · 登录页（Land in）</a></li>
+      <li><a href="#fr-consent">6.2 · Cookie 与同意管理</a></li>
+      <li><a href="#fr-settings">6.3 · 个人设置页</a></li>
+      <li><a href="#fr-save">6.4 · 收藏、合并且同步</a></li>
+      <li><a href="#fr-admin">6.5 · 产品优化看板</a></li>
+      <li><a href="#fr-site">6.6 · 既有页面改动</a></li>
+      <li><a href="#rules">7 · 共享规则</a></li>
+      <li><a href="#metrics">8 · 指标与决策方式</a></li>
+      <li><a href="#risks">9 · 依赖、风险与阻塞</a></li>
+      <li><a href="#questions">10 · 待确认问题</a></li>
+      <li><a href="#decisions">11 · 本次评审需拍板</a></li>
+      <li class="sub"><a href="#glossary">术语表</a></li>
+    </ol>
+  </aside>
+
+  <main>
+
+    <header class="cover">
+      <p class="eyebrow">Modification PRD / Technical-agnostic</p>
+      <h1>把“可浏览的招聘站”变成<br>“可度量、可持续优化的产品”</h1>
+      <p class="lede">
+        本次修改在现有 Robot Works demo 上增加四件事：邮箱登录、分辖区的 Cookie 同意、带收藏能力的个人设置页，
+        以及一个只对内部开放的产品优化看板。核心目的不是增加功能数量，而是让团队第一次能看到
+        “哪个市场、哪类筛选、哪种对比行为最终带来了外部申请”。
+      </p>
+      <div class="meta-grid">
+        <div class="meta-cell">
+          <span class="meta-key">Document</span>
+          <span class="meta-val">v2.0-draft</span>
+        </div>
+        <div class="meta-cell">
+          <span class="meta-key">Status</span>
+          <span class="meta-val">待产品负责人确认</span>
+        </div>
+        <div class="meta-cell">
+          <span class="meta-key">Based on</span>
+          <span class="meta-val">v1 产品设计文档 + 线上 demo</span>
+        </div>
+        <div class="meta-cell">
+          <span class="meta-key">Scope</span>
+          <span class="meta-val">Frontend + 账户 + 同意 + 内部后台</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="summary" id="summary">
+      <h2>评审摘要 — 先看这五条</h2>
+      <ol>
+        <li><strong>存在一个硬阻塞：</strong>当前站点托管在 GitHub Pages，是纯静态页面。邮箱登录、服务端事件采集、后台看板都无法在纯静态托管上真实运行。需要先确认服务端/托管方案，否则本期只能交付“假数据可点击原型”，不能上线收集真实邮箱。</li>
+        <li><strong>v1 的表述只适用于 v1：</strong>“不收集个人数据”“无账户”是 v1 的范围声明，不是永久承诺。v2 是后续版本，新增邮箱账户与体验分析；需要更新对外说明，但仍不收集简历、不做站内申请、不用于广告或对外销售。</li>
+        <li><strong>关键判断：登录保持可选。</strong>访客仍可筛选、收藏（本机）、对比、跳转申请。登录只用于跨设备同步、个人设置、数据导出/删除。这样不破坏 v1 的“零摩擦退出”。</li>
+        <li><strong>关键判断：语言不等于司法辖区。</strong>EN / JA / ZH / DE 是界面语言，不是法律辖区。Cookie 规则必须按 IP 识别到的国家决定，语言只决定“用哪种语言展示规则”。EN 是国际英语默认，不因为选了英文就默认追踪；美国按 IP 单独识别。无法识别时，默认采用最严格的“先同意后追踪”。</li>
+        <li><strong>关键判断：后台默认只看伪匿名聚合数据。</strong>管理员默认看到的是聚合指标和 UUID，不是用户邮箱。只有 Owner 角色可在填写理由后被审计地查看邮箱，避免“监控”变成无边界的窥探。</li>
+      </ol>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="background">
+      <h2><span class="num">01</span>背景与目标</h2>
+      <div class="section-rule"></div>
+
+      <p>
+        v1 已经能让人完成“筛选 → 看详情 → 去公司官网申请”。但它是纯静态站点：收藏和对比只存在于当前浏览器，
+        换设备就丢失；团队也无法知道哪些筛选、哪些职位、哪次对比真正带来了申请。
+        换句话说，v1 能回答“页面长什么样”，不能回答“用户为什么回来、哪里值得继续投入”。
+      </p>
+      <p>
+        v2 的产品回应是增加一层最小可用的账户与度量基础设施，而不是把招聘站改造成社区或申请系统。
+        可观察的完成状态有三个：
+      </p>
+      <ul>
+        <li>同一个用户在设备 A 收藏职位与公司后，能在设备 B 登录并看到同样的收藏。</li>
+        <li>任一目标市场的用户，在非必要追踪启动前，能明确选择“全部接受 / 全部拒绝 / 自定义”，并能随时改回。</li>
+        <li>内部运营者能回答：哪些筛选带来详情打开、对比会话有多少最终点了申请、不同辖区的同意选择如何分布——且默认看不到用户邮箱。</li>
+      </ul>
+
+      <h3>目标（以可观察行为表述）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="t-col-id">ID</th><th>目标</th><th>完成证据</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>G1</td><td>收藏可跨设备延续</td><td>用户在新设备登录后，已收藏职位与公司数量与旧设备一致（除已失效职位）。</td></tr>
+            <tr><td>G2</td><td>四个市场可合规进入</td><td>四个辖区档案下，非必要 Cookie 的默认状态、按钮文案、重新征求时机均符合本文件规则；拒绝后站点功能不受损。</td></tr>
+            <tr><td>G3</td><td>关键漏斗可度量</td><td>后台可查看“筛选 → 详情 → 对比 → 外部申请”的分段转化，并显示同意覆盖率。</td></tr>
+            <tr><td>G4</td><td>不破坏零摩擦浏览</td><td>未登录用户仍可完成 v1 的全部核心动作；登录提示不遮挡内容、不重复弹出。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout note">
+        <span class="tag">范围判断</span>
+        本期不做“给用户看的个人数据仪表盘”，也不做雇主后台。后台是内部运营工具，不是产品对外功能。
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="conflict">
+      <h2><span class="num">02</span>版本演进说明：v1 的边界只适用于 v1</h2>
+      <div class="section-rule"></div>
+
+      <p>
+        v1 文档里的“不收集个人数据”“无账户、无登录”，描述的是 v1 的产品范围，不是对后续版本的永久承诺。
+        v2 是新的版本，新增了邮箱账户与体验分析，因此需要一套新的对外说明。
+        这里不是“修订 PII 边界”，而是明确 v1 与 v2 各自的范围。
+      </p>
+      <p>
+        v2 仍然保持的底线：不托管简历、不做站内申请、不做雇主账户、不把数据用于广告、营销或对外销售。
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="t-col-wide">v1 的表述</th><th>v2 的定位</th><th>需要更新的位置</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>“does not collect personal data”（v1 范围）</td>
+              <td>v2 仅在用户主动登录时收集<strong>邮箱</strong>；体验事件去标识化，不写入邮箱。仍不收集简历、申请材料、证件或支付信息。</td>
+              <td>首页 hero 文案、About、隐私政策、页脚</td>
+            </tr>
+            <tr>
+              <td>“No account, no sign-in, no profile.”</td>
+              <td>v2 账户<strong>可选</strong>：浏览、本机收藏、对比、申请均无需登录；账户只用于跨设备收藏与设置。</td>
+              <td>Header、登录页、设置页</td>
+            </tr>
+            <tr>
+              <td>“Nothing personally identifiable.”</td>
+              <td>邮箱属于个人数据；体验事件使用随机 UUID 与会话 ID，看板默认只显示聚合与 UUID。</td>
+              <td>隐私政策、同意文案、看板权限</td>
+            </tr>
+            <tr>
+              <td>v1 将 accounts / saved-jobs sync 列为 Out of Scope</td>
+              <td>v2 将其纳入范围，但仅限邮箱账户与收藏同步。</td>
+              <td>v1 第 11 节、路线图</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout note">
+        <span class="tag">对外表述</span>
+        不要说“我们仍然不收集任何数据”。准确说法是：v1 不收集；v2 只在登录时收集邮箱，并在同意后收集用于改进产品的匿名行为事件。
+      </div>
+
+      <p class="small muted">
+        本文件中所有涉及 GDPR、TTDSG、APPI、PIPL、CCPA/CPRA 的描述均为产品规则草案，不构成法律意见。
+        上线前必须由目标市场的法务或 DPO 逐条复核，尤其是同意记录保存期限、跨境传输、以及中国大陆的数据本地化要求。
+      </p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="scope">
+      <h2><span class="num">03</span>范围</h2>
+      <div class="section-rule"></div>
+
+      <h3>P0 — 本期必须完成</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="t-col-id">ID</th><th>能力</th><th>为什么属于 P0</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>S1</td><td>登录页（Land in）+ 邮箱魔法链接</td><td>没有账户就无法跨设备同步，也无法把同意记录与用户关联。</td></tr>
+            <tr><td>S2</td><td>Cookie 同意横幅、偏好中心、同意记录</td><td>四个市场的进入门槛；也是分析事件能否采集的前置条件。</td></tr>
+            <tr><td>S3</td><td>个人设置页：账户、收藏职位、收藏公司、偏好、隐私</td><td>用户需要一个地方查看“我收藏了什么、我的数据怎么被使用”。</td></tr>
+            <tr><td>S4</td><td>访客本地收藏合并到账户</td><td>v1 已有本机收藏；不做合并会造成“登录后收藏消失”的严重流失。</td></tr>
+            <tr><td>S5</td><td>Header 账户入口、页脚法律链接、四语文案</td><td>入口与告知缺一不可。</td></tr>
+            <tr><td>S6</td><td>内部数据后台（只读）</td><td>本次修改的直接目的：用数据决定下一步改什么。</td></tr>
+            <tr><td>S7</td><td>关键事件埋点</td><td>后台没有事件就没有意义；需要覆盖 v1 的成功指标。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>P1 — 下一期</h3>
+      <ul>
+        <li>保存的搜索条件与“新职位”提醒（需要单独的事务性/营销邮件同意）。</li>
+        <li>社交账号登录（Google / GitHub）。</li>
+        <li>后台按单个用户查看完整旅程（仍为伪匿名，需更高权限）。</li>
+        <li>Global Privacy Control 自动识别、英国/瑞士独立辖区档案。</li>
+        <li>收藏列表实时同步（本期只要求刷新后一致）。</li>
+      </ul>
+
+      <h3>明确不做</h3>
+      <ul>
+        <li>简历上传、站内申请、申请状态跟踪、雇主账户与雇主后台。</li>
+        <li>广告或营销 Cookie、再营销、第三方数据售卖。</li>
+        <li>薪资预测、公司评价、面试报告、站内私信、个性化推荐。</li>
+        <li>手机 App、付费订阅、候选人付费功能。</li>
+        <li>在后台编辑职位或修改排名（本期后台只读）。</li>
+      </ul>
+
+      <div class="callout blocker">
+        <span class="tag">交付边界</span>
+        若服务端尚未确定，本期可以先交付<strong>可点击的前端原型 + 假数据后台</strong>用于评审，
+        但不得上线收集真实邮箱、不得产生真实同意记录。原型中的“登录成功”必须明确标注为演示状态。
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="model">
+      <h2><span class="num">04</span>角色、对象与状态</h2>
+      <div class="section-rule"></div>
+
+      <h3>角色与权限</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>角色</th><th>能做什么</th><th>不能做什么</th><th>数据可见范围</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>访客 Visitor</strong></td>
+              <td>筛选、排序、看详情、本机收藏、本机对比、跳转外部申请、管理自己的 Cookie 选择</td>
+              <td>跨设备同步、进入设置页、查看账户数据</td>
+              <td>仅本机 localStorage 与匿名同意记录</td>
+            </tr>
+            <tr>
+              <td><strong>注册用户 User</strong></td>
+              <td>访客全部能力；同步收藏职位/公司；管理语言与隐私偏好；导出或删除账户</td>
+              <td>查看他人数据；进入内部后台</td>
+              <td>仅自己的账户、收藏与同意记录</td>
+            </tr>
+            <tr>
+              <td><strong>分析师 Analyst</strong></td>
+              <td>查看后台聚合指标、下载脱敏 CSV</td>
+              <td>查看邮箱或可识别个人的明细；管理角色</td>
+              <td>聚合数据 + 伪匿名 UUID</td>
+            </tr>
+            <tr>
+              <td><strong>Owner</strong></td>
+              <td>分析师全部能力；管理后台角色；在填写理由后查看单个账户邮箱</td>
+              <td>代替用户操作账户；导出邮箱列表</td>
+              <td>全部；敏感操作进入审计日志</td>
+            </tr>
+            <tr>
+              <td><strong>雇主 Employer</strong></td>
+              <td>无账户、无后台</td>
+              <td>任何数据访问</td>
+              <td>无</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>核心对象</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>对象</th><th>关键字段（产品层）</th><th>生命周期</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>账户 Account</td>
+              <td>内部 UUID、邮箱、邮箱验证时间、创建时间、界面语言、生效辖区档案、最后登录时间、状态</td>
+              <td>active → pending_deletion → deleted</td>
+            </tr>
+            <tr>
+              <td>会话 Session</td>
+              <td>设备标识、创建时间、过期时间、是否已撤销</td>
+              <td>active → expired / revoked</td>
+            </tr>
+            <tr>
+              <td>收藏职位 Saved Job</td>
+              <td>用户 UUID、职位 ID、收藏时间、来源页面</td>
+              <td>active → closed（职位关闭）→ removed（用户移除或职位下架）</td>
+            </tr>
+            <tr>
+              <td>收藏公司 Saved Company</td>
+              <td>用户 UUID、公司 ID、关注时间</td>
+              <td>active → removed</td>
+            </tr>
+            <tr>
+              <td>同意记录 Consent Record</td>
+              <td>同意 ID、匿名或用户 UUID、时间、政策版本、识别国家、生效档案、界面语言、类别选择、操作方式、撤回时间</td>
+              <td>none → granted / rejected / customized → withdrawn / superseded / expired</td>
+            </tr>
+            <tr>
+              <td>分析事件 Analytics Event</td>
+              <td>事件 ID、名称、发生时间、伪匿名用户/会话 ID、页面、属性、同意状态、辖区、语言</td>
+              <td>写入后不可修改；到期删除或聚合</td>
+            </tr>
+            <tr>
+              <td>职位举报 Listing Report</td>
+              <td>职位 ID、原因、举报者（匿名或用户）、状态</td>
+              <td>open → threshold_reached（≥3 个独立用户）→ hidden；或 dismissed</td>
+            </tr>
+            <tr>
+              <td>后台审计日志 Audit Log</td>
+              <td>操作者、动作、对象、理由、时间</td>
+              <td>只追加，不可编辑</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="glossary">术语</h3>
+      <p class="small">
+        <strong>Land in</strong>：本文件指“登录入口页”，不是营销落地页（Landing Page）。两者是否都需要，见待确认 Q1。<br>
+        <strong>辖区档案 Region profile</strong>：决定 Cookie 默认状态与征求方式的规则集合，由 IP 识别国家映射，不由界面语言决定。<br>
+        <strong>必要 Cookie</strong>：登录会话、安全校验、负载均衡所需，无法关闭。<br>
+        <strong>偏好存储</strong>：语言、排序、本机收藏/对比；只用于交付用户主动请求的功能，不做追踪。<br>
+        <strong>同意覆盖率</strong>：有分析同意的会话数 ÷ 全部会话数。所有后台指标都必须与它一起展示，否则数据有偏差。
+      </p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="flows">
+      <h2><span class="num">05</span>核心流程</h2>
+      <div class="section-rule"></div>
+
+      <h3>流程 A — 首次访问与同意</h3>
+      <pre class="flow">首次访问
+   │
+   ├─ 识别国家（IP，粗粒度）──失败──► 使用最严格档案（默认不追踪）
+   │
+   ▼
+展示非阻塞同意横幅（界面语言 = 当前语言）
+   │
+   ├─ 全部接受 ──► 写入同意记录 ──► 加载分析 ──► 正常浏览
+   ├─ 全部拒绝 ──► 写入同意记录 ──► 不加载分析 ──► 正常浏览（功能不受限）
+   └─ 自定义   ──► 偏好中心 ──► 仅启用所选类别 ──► 正常浏览
+   │
+   ▼
+页脚 / 设置中随时可重新打开并修改，撤回立即生效</pre>
+
+      <h3>流程 B — 访客收藏 → 登录 → 合并</h3>
+      <pre class="flow">访客浏览（无登录）
+   │
+   ├─ Save 职位 ──► 存本机 localStorage ──► 显示 “Saved on this device”
+   ├─ Follow 公司 ──► 存本机
+   └─ Select 对比 ──► 存本机（对比始终不跨设备）
+   │
+   ▼
+点击 Header “Sign in” 或设置入口
+   │
+   ▼
+登录页：输入邮箱 ──► 发送一次性链接（15 分钟）
+   │
+   ▼
+点击邮件链接 ──► 建立会话
+   │
+   ├─ 本机有收藏？──否──► 进入首页 / 设置页
+   └─ 是
+        ▼
+   “本机有 3 个收藏职位、1 家公司，是否同步到账户？”
+        ├─ 同步全部 ──► 并集合并、按 ID 去重 ──► 服务端保存
+        └─ 暂不     ──► 保留本机，不自动上传；下次登录再询问</pre>
+
+      <h3>流程 C — 对比到申请（v1 主路径不变）</h3>
+      <pre class="flow">首页筛选 ──► 详情 ──► 加入对比（2–4 个）
+                              │
+                              ▼
+                         对比页
+                              │
+                    ┌─────────┴─────────┐
+                    ▼                   ▼
+              调整选择             打开单个详情
+                    │                   │
+                    └─────────┬─────────┘
+                              ▼
+                  “Apply on company site” ──► 新标签打开雇主官网
+                              │
+                              ▼
+                  记录 apply_click（来源、对比集大小、是否已登录）</pre>
+
+      <h3>流程 D — 数据到决策（内部）</h3>
+      <pre class="flow">事件采集（仅在同意后）
+   │
+   ▼
+后台：概览 / 登录漏斗 / 筛选发现 / 对比与申请 / 内容质量 / 同意分布
+   │
+   ├─ 某类筛选详情打开率高 ──► 评估是否增加该类目首页入口
+   ├─ 对比激活低          ──► 检查 Select / Compare 文案与位置
+   ├─ 同意拒绝率高        ──► 检查横幅文案与默认值是否被误解
+   └─ 过期举报率高        ──► 提高该来源的复核频率</pre>
+
+      <h3>登录页线框（桌面）</h3>
+      <pre class="wire">┌──────────────────────────────────────────────────────────────┐
+│ Robot Works                              EN  日本語  中文  DE │
+├───────────────────────────────┬──────────────────────────────┤
+│                               │  Sign in                     │
+│  Robotics only.               │                              │
+│  No noise.                    │  Email                       │
+│                               │  ┌────────────────────────┐  │
+│  Save roles. Compare teams.   │  │ you@company.com        │  │
+│  Apply direct.                │  └────────────────────────┘  │
+│                               │  ┌────────────────────────┐  │
+│                               │  │ Continue               │  │
+│                               │  └────────────────────────┘  │
+│                               │  We'll email you a one-time │
+│                               │  link. No password.         │
+│                               │  Privacy · Terms            │
+└───────────────────────────────┴──────────────────────────────┘</pre>
+
+      <h3>同意横幅线框（非阻塞，底部）</h3>
+      <pre class="wire">┌──────────────────────────────────────────────────────────────┐
+│ Cookies                                                      │
+│ Necessary cookies keep you signed in. Optional analytics     │
+│ helps us understand which roles are useful.                  │
+│                                                              │
+│ [ Accept all ]   [ Reject all ]   [ Customize ]   Privacy    │
+└──────────────────────────────────────────────────────────────┘
+※ 三个按钮同等视觉权重；不预勾选；不接受“继续浏览即同意”。</pre>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="fr-auth">
+      <h2><span class="num">06.1</span>登录页（Land in）</h2>
+      <div class="section-rule"></div>
+
+      <p><span class="pill">FR-AUTH</span> 目标：用最少的个人信息建立可跨设备延续的账户，同时不把未登录用户挡在内容之外。</p>
+
+      <h3>入口</h3>
+      <ul>
+        <li>Header 右侧 “Sign in”（访客）或账户菜单（已登录）。</li>
+        <li>设置页深链接：未登录访问 <span class="mono">settings</span> 时跳转登录页，并携带 <span class="mono">next=settings</span>。</li>
+        <li>收藏后的非阻塞提示：“Saved on this device · Sign in to sync”。不自动弹窗，不遮挡列表。</li>
+        <li>直接访问登录页 URL。</li>
+      </ul>
+
+      <h3>字段与校验</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>字段</th><th>规则</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>邮箱</td><td>必填；去除首尾空格并转小写；最大 254 字符；必须包含一个 @ 与有效域名结构；不允许换行。错误在字段下方就地提示，不使用仅颜色表达。</td></tr>
+            <tr><td>密码</td><td>不存在。本期不做密码登录，也不做社交登录。</td></tr>
+            <tr><td>条款勾选</td><td>不设“我已阅读”空勾选，避免虚假同意；在按钮下方以一行说明“继续即表示同意 Terms 与 Privacy Policy”，并提供可点击链接。</td></tr>
+            <tr><td>营销订阅</td><td>本期不收集营销同意，不显示营销勾选框。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>处理规则</h3>
+      <ol>
+        <li>提交后先做频率限制：同一邮箱 60 秒内不可重复发送；同一邮箱每小时上限 <span class="mono">[TBD]</span>；同一 IP 上限 <span class="mono">[TBD]</span>。</li>
+        <li>无论邮箱是否已注册，都显示同一句确认文案：“If an account exists for this address, we sent a one-time link.” 防止邮箱枚举。</li>
+        <li>首次使用某邮箱即创建账户；不区分“注册”和“登录”两个入口。</li>
+        <li>魔法链接 15 分钟内有效、只能使用一次、绑定邮箱；点击后建立会话并跳转。</li>
+        <li>链接过期或被使用过时，显示明确页面并提供“Send a new link”，不显示笼统错误。</li>
+        <li>跳转参数 <span class="mono">next</span> 只允许本站相对路径白名单；非法值一律回首页，防止开放重定向。</li>
+        <li>邮件只用于事务性通信（登录链接、账户删除确认）；不发送职位推荐或营销内容。</li>
+      </ol>
+
+      <h3>状态</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>状态</th><th>界面</th><th>下一步</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>idle</td><td>邮箱输入 + Continue</td><td>提交</td></tr>
+            <tr><td>invalid_email</td><td>字段下方说明具体原因</td><td>修正后重新提交</td></tr>
+            <tr><td>sending</td><td>按钮进入进行中状态，禁止重复点击</td><td>等待</td></tr>
+            <tr><td>sent</td><td>“Check your inbox” + 邮箱地址 + 重发倒计时</td><td>打开邮件 / 重发</td></tr>
+            <tr><td>rate_limited</td><td>说明还需等待多久；不暴露账号是否存在</td><td>稍后重试</td></tr>
+            <tr><td>send_failed</td><td>说明未发送成功，提供重试；不指责用户</td><td>重试</td></tr>
+            <tr><td>link_expired / link_used</td><td>说明链接失效原因</td><td>发送新链接</td></tr>
+            <tr><td>success</td><td>短暂确认，随后跳转 <span class="mono">next</span> 或首页</td><td>——</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>会话与退出</h3>
+      <ul>
+        <li>会话默认 30 天 <span class="mono">[TBD]</span>，可在账户设置中“Sign out all devices”。</li>
+        <li>退出后，本机收藏保留；账户收藏不再显示，直至再次登录。</li>
+        <li>同一邮箱可在多设备同时登录；不限制设备数 <span class="mono">[TBD]</span>。</li>
+      </ul>
+
+      <h3>异常</h3>
+      <ul>
+        <li>邮件进入垃圾箱：在 sent 状态提供 “Check spam” 与重发。</li>
+        <li>用户关掉页面后再点链接：链接仍可用（未过期且未使用），成功后进入默认首页。</li>
+        <li>用户在两个标签页同时点同一链接：第一个成功，第二个显示 link_used 并提示已登录。</li>
+        <li>离线提交：阻止发送并提示检查网络。</li>
+      </ul>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="fr-consent">
+      <h2><span class="num">06.2</span>Cookie 与同意管理</h2>
+      <div class="section-rule"></div>
+
+      <p><span class="pill">FR-CONSENT</span> 目标：按用户所在辖区决定“追踪是否需要先同意”，并让拒绝和接受一样容易。</p>
+
+      <div class="callout conflict">
+        <span class="tag">关键修正</span>
+        界面语言与法律辖区必须解耦。一个在德国用英文界面的用户，仍然适用欧盟的“先同意”规则；
+        一个在中国用中文界面的用户，不会因为语言是中文就自动适用美国规则。
+        正确顺序是：<strong>先按 IP 识别国家 → 映射辖区档案 → 再用当前界面语言展示文案</strong>。
+      </div>
+
+      <h3>识别与生效规则</h3>
+      <ol>
+        <li>首次访问时按 IP 识别国家，只保存国家代码，不保存完整 IP。</li>
+        <li>识别失败、匿名网络、或国家不在四个档案内时，使用“最严格档案”：默认不追踪，先征求同意。</li>
+        <li>用户可在“隐私设置”中声明自己所在辖区。生效档案取“识别结果”和“用户声明”中更严格的一个，防止通过切换地区降低保护。</li>
+        <li>用户旅行或更换网络后，在下次重新征求时重新评估；不会在页面加载中途悄悄切换规则。</li>
+      </ol>
+
+      <h3>辖区档案</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>档案</th><th>适用</th><th>分析默认</th><th>首层按钮</th><th>重新征求</th><th>备注</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>P1 欧盟/德国</strong></td>
+              <td>EEA 成员国</td>
+              <td>关闭，先同意</td>
+              <td>Accept all / Reject all / Customize</td>
+              <td>12 个月、政策版本变更、撤回后再次启用时</td>
+              <td>拒绝与接受同等显著；可随时撤回。<span class="muted">[需法务确认]</span></td>
+            </tr>
+            <tr>
+              <td><strong>P2 日本</strong></td>
+              <td>日本</td>
+              <td>关闭，先同意</td>
+              <td>Accept all / Reject all / Customize</td>
+              <td>12 个月、政策版本变更</td>
+              <td>保守默认；若使用匿名统计可否改为告知+opt-out，<span class="muted">[需法务确认]</span></td>
+            </tr>
+            <tr>
+              <td><strong>P3 中国大陆</strong></td>
+              <td>中国大陆</td>
+              <td>关闭，先同意</td>
+              <td>同意全部 / 拒绝全部 / 自定义</td>
+              <td>政策版本变更、目的变更</td>
+              <td>单独同意与数据本地化要求 <span class="muted">[需法务确认]</span></td>
+            </tr>
+            <tr>
+              <td><strong>P4 美国</strong></td>
+              <td>仅按 IP 识别为美国时适用</td>
+              <td>开启，提供退出</td>
+              <td>Accept all / Reject all / Customize；并展示 “Do Not Sell or Share” 入口</td>
+              <td>12 个月、政策版本变更</td>
+              <td>语言不影响档案；美国用户即使选中文界面也适用本档案。<span class="muted">[需法务确认]</span></td>
+            </tr>
+            <tr>
+              <td><strong>P0 国际英语默认 / 兜底</strong></td>
+              <td>EN 国际默认；其他地区；识别失败</td>
+              <td>关闭，先同意</td>
+              <td>Accept all / Reject all / Customize</td>
+              <td>12 个月</td>
+              <td>最严格原则；EN 只是界面语言，不默认追踪。宁可少采集，不可默认追踪。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Cookie 类别</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>类别</th><th>包含</th><th>默认</th><th>用户可关闭</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>必要</strong></td><td>登录会话、CSRF/安全校验、负载均衡</td><td>开启</td><td>否</td><td>不开启则无法保持登录。</td></tr>
+            <tr><td><strong>偏好</strong></td><td>界面语言、排序方式、本机收藏/对比状态</td><td>开启</td><td>否</td><td>仅交付用户主动请求的功能，不做跨站追踪。是否属于“严格必要”，<span class="muted">[需法务确认]</span>。</td></tr>
+            <tr><td><strong>分析</strong></td><td>页面浏览、筛选、详情、对比、申请点击等去标识化事件</td><td>按档案，P1/P2/P3/P0 关闭；P4 开启</td><td>是</td><td>关闭后不写入任何分析标识，事件丢弃，不补采。</td></tr>
+            <tr><td><strong>营销</strong></td><td>无</td><td>——</td><td>——</td><td>本期不接入任何广告、再营销或第三方售卖。没有类别就不展示假开关。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>首层横幅规则</h3>
+      <ul>
+        <li>非阻塞：不覆盖主要内容，不锁定滚动，不要求先选择才能浏览。</li>
+        <li>说明用途与类别，不使用“我们重视您的隐私”这类空话。</li>
+        <li>“全部接受”“全部拒绝”“自定义”三个按钮同等视觉权重；不把拒绝做成灰色小字。</li>
+        <li>不预勾选；不显示“继续浏览即视为同意”；不使用倒计时或恐吓文案。</li>
+        <li>提供 Privacy Policy 与 Cookie 列表的直接链接。</li>
+        <li>横幅语言跟随界面语言；规则跟随辖区档案。切换语言不会关闭横幅或改变已生效的同意状态。</li>
+        <li>做出选择后横幅消失，页脚保留 “Cookie settings” 常驻入口。</li>
+      </ul>
+
+      <h3>同意记录</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>字段</th><th>是否必存</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>同意 ID</td><td>是</td><td>匿名生成；登录后与用户 UUID 关联，不与邮箱一起进入分析系统。</td></tr>
+            <tr><td>时间戳</td><td>是</td><td>用户本地时区展示，存储用统一时间。</td></tr>
+            <tr><td>政策版本</td><td>是</td><td>用于证明当时展示的是哪一版文本。</td></tr>
+            <tr><td>识别国家 / 生效档案</td><td>是</td><td>只存国家代码，不存完整 IP。</td></tr>
+            <tr><td>界面语言</td><td>是</td><td>用于解释用户当时看到的是哪种语言版本。</td></tr>
+            <tr><td>类别选择</td><td>是</td><td>必要/偏好/分析各自的开或关。</td></tr>
+            <tr><td>操作方式</td><td>是</td><td>全部接受 / 全部拒绝 / 自定义；来自横幅还是设置页。</td></tr>
+            <tr><td>撤回时间</td><td>是（如发生）</td><td>撤回立即生效；历史记录只追加，不覆盖。</td></tr>
+            <tr><td>完整 IP、User-Agent</td><td>否</td><td>不收集，避免过度识别。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>状态机</h3>
+      <pre class="flow">none ──展示横幅──► pending
+pending ──全部接受──► granted_all
+pending ──全部拒绝──► rejected_all
+pending ──自定义────► customized
+granted_all / rejected_all / customized
+   ├─ 用户修改 ──► 新记录（旧记录标记 superseded）
+   ├─ 政策版本变更 ──► superseded，按档案重新征求
+   ├─ 12 个月到期 ──► expired，重新征求
+   └─ 用户撤回 ──► withdrawn，分析立即停止</pre>
+
+      <h3>分析门控</h3>
+      <ul>
+        <li>在“先同意”档案下，同意前不加载分析脚本、不写分析标识、不发送事件。同意前发生的行为不补采。</li>
+        <li>在“退出制”档案下，默认采集，但首层必须提供明确的退出入口；退出后立即停止。</li>
+        <li>拒绝分析不影响筛选、收藏、对比、申请跳转与登录。</li>
+        <li>后台每个指标旁必须显示同意覆盖率；覆盖率过低时，指标只能用于方向判断，不能当作全量事实。</li>
+      </ul>
+
+      <h3>异常与边界</h3>
+      <ul>
+        <li>IP 识别服务超时：直接使用 P0 兜底，不阻塞页面。</li>
+        <li>用户禁用 JavaScript：只保留必要 Cookie，不展示分析；页面核心内容仍可读。</li>
+        <li>政策文本加载失败：使用内置的当前版本文本，不允许回退到过期版本。</li>
+        <li>用户在登录前后分别做出选择：以最新一次明确操作为准；登录不自动继承匿名同意，需在设置页确认一次 <span class="muted">[需法务确认]</span>。</li>
+        <li>未成年人：产品不面向未满 16 岁用户 <span class="muted">[需法务确认]</span>。</li>
+      </ul>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="fr-settings">
+      <h2><span class="num">06.3</span>个人设置页</h2>
+      <div class="section-rule"></div>
+
+      <p><span class="pill">FR-SETTINGS</span> 目标：让用户在一个页面内确认“我收藏了什么、我的账户是什么、我的数据怎么被使用”，而不是散落在多个入口。</p>
+
+      <h3>访问与布局</h3>
+      <ul>
+        <li>仅注册用户可进入；访客点击时跳转登录页并携带 <span class="mono">next=settings</span>。</li>
+        <li>左侧分区导航，右侧内容区；移动端改为顶部横向滚动标签。</li>
+        <li>分区：Account / Saved jobs / Saved companies / Preferences / Privacy。</li>
+      </ul>
+
+      <pre class="wire">┌────────────┬───────────────────────────────────────────────┐
+│ Account    │  Saved jobs (12)                     [Search] │
+│ Saved jobs │  ┌─────────────────────────────────────────┐  │
+│ Companies  │  │ Senior Controls Engineer                │  │
+│ Preferences│  │ Figure AI · Sunnyvale, US               │  │
+│ Privacy    │  │ USD 160k–210k · Open · Saved Sep 21     │  │
+│            │  │ [Open]  [Remove]                        │  │
+│            │  └─────────────────────────────────────────┘  │
+│            │  ┌─────────────────────────────────────────┐  │
+│            │  │ Perception Lead · Unitree · Hangzhou     │  │
+│            │  │ Closed · Saved Sep 12    [Open] [Remove] │  │
+│            │  └─────────────────────────────────────────┘  │
+└────────────┴───────────────────────────────────────────────┘</pre>
+
+      <h3>分区内容</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>分区</th><th>内容</th><th>规则</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Account</strong></td>
+              <td>邮箱、验证状态、加入时间、界面语言、当前生效辖区；Sign out、Sign out all devices；Export data；Delete account</td>
+              <td>导出与删除必须先重新验证身份（重新点击邮件链接）；删除需二次确认。</td>
+            </tr>
+            <tr>
+              <td><strong>Saved jobs</strong></td>
+              <td>职位标题、公司、地点、薪资、状态（Open / Closed / Removed）、收藏时间；打开详情、移除、按关键词过滤</td>
+              <td>已关闭职位保留但标记 Closed，由用户决定是否移除；已下架职位标记 Removed，保留 30 天 <span class="mono">[TBD]</span> 后自动移除。</td>
+            </tr>
+            <tr>
+              <td><strong>Saved companies</strong></td>
+              <td>公司名、地点、当前开放职位数、关注时间；查看公司职位、取消关注</td>
+              <td>本期只做列表与筛选，不发送邮件提醒；关注不等于订阅。</td>
+            </tr>
+            <tr>
+              <td><strong>Preferences</strong></td>
+              <td>界面语言（EN / 日本語 / 中文 / DE）、显示时区（浏览器时区，只读说明）</td>
+              <td>修改立即生效并写入账户；同时更新本机语言，避免其他设备不一致。</td>
+            </tr>
+            <tr>
+              <td><strong>Privacy</strong></td>
+              <td>当前同意摘要（时间、版本、类别）、Change preferences、Withdraw all optional、Cookie 列表、隐私政策与条款、最近 5 次同意记录</td>
+              <td>修改后立即生效；撤回分析后不再写入任何新事件，后台只显示历史聚合。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>账户导出</h3>
+      <ul>
+        <li>导出内容：账户基本信息（不含会话密钥）、收藏职位、收藏公司、同意记录历史。</li>
+        <li>格式：JSON；小数据量立即下载，大数据量通过邮件发送一次性下载链接 <span class="mono">[TBD]</span>。</li>
+        <li>导出不包含其他用户数据，不包含后台聚合数据。</li>
+      </ul>
+
+      <h3>账户删除</h3>
+      <ol>
+        <li>入口仅在 Account 分区，使用文字按钮，不与“退出登录”并排，避免误触。</li>
+        <li>确认页说明：将删除账户、收藏与偏好；同意记录可能按法律要求保留为匿名证据；删除后不可恢复。</li>
+        <li>用户需输入邮箱或 “DELETE” 进行二次确认，并可选择填写原因（可选）。</li>
+        <li>确认后立即退出所有设备，账户进入 pending_deletion，30 天后彻底删除 <span class="mono">[TBD，需法务确认]</span>。</li>
+        <li>30 天内重新登录可取消删除；页面必须明确告知这一点。</li>
+      </ol>
+
+      <h3>状态与异常</h3>
+      <ul>
+        <li>加载中：使用骨架屏，不显示空白页。</li>
+        <li>网络失败：显示重试按钮，保留已加载内容，不清空列表。</li>
+        <li>收藏列表为空：说明“尚未收藏职位”，提供 Browse jobs 按钮，不显示无意义的空表格。</li>
+        <li>职位已下架：显示 Removed 状态与说明，不给出失效的 Apply 按钮。</li>
+        <li>会话过期：提示重新登录，登录后回到原分区。</li>
+      </ul>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="fr-save">
+      <h2><span class="num">06.4</span>收藏、合并与同步</h2>
+      <div class="section-rule"></div>
+
+      <p><span class="pill">FR-SAVE</span> 目标：保留 v1 “无需登录即可收藏”的低摩擦，同时让登录用户获得跨设备连续性。</p>
+
+      <h3>访客与账户的行为差异</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>动作</th><th>访客</th><th>注册用户</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>收藏职位</td><td>写入本机；标签显示 “Saved on this device”</td><td>写入账户；跨设备刷新后可见</td></tr>
+            <tr><td>关注公司</td><td>写入本机</td><td>写入账户；跨设备刷新后可见</td></tr>
+            <tr><td>加入对比</td><td>写入本机</td><td>写入本机（对比不跨设备，沿用 v1 6.1）</td></tr>
+            <tr><td>删除收藏</td><td>立即从本机移除</td><td>立即从界面移除；失败则回滚并提示</td></tr>
+            <tr><td>查看收藏列表</td><td>首页 “Saved” 视图，仅本机</td><td>设置页 Saved jobs / Saved companies，或首页 Saved 视图</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>首次登录的合并规则</h3>
+      <ol>
+        <li>登录成功后，如果本机存在收藏，显示非阻塞确认：“This device has 3 saved jobs and 1 company. Sync to your account?”</li>
+        <li>选择“同步全部”：取本机与账户的<strong>并集</strong>，按职位 ID / 公司 ID 去重；同一对象保留较早的收藏时间。</li>
+        <li>选择“暂不”：保留本机数据，不上传、不删除；下次登录再询问，不重复弹窗打断浏览。</li>
+        <li>同步失败：保留本机数据，提示重试；不允许出现“账户里有、界面上没有”的静默丢失。</li>
+      </ol>
+
+      <h3>同步与冲突</h3>
+      <ul>
+        <li>同一账户在两台设备同时收藏同一职位：以先写入服务端的时间为准，不重复计数。</li>
+        <li>设备 A 取消收藏、设备 B 同时收藏：以最后提交到服务端的操作为准；界面显示刷新后的真实状态。</li>
+        <li>本期不要求实时推送；在下次打开页面或手动刷新后一致即可。</li>
+        <li>离线时：允许本机继续收藏，但明确标记 “Will sync when online”；恢复网络后合并，冲突按上一条规则。</li>
+      </ul>
+
+      <h3>公司关注</h3>
+      <ul>
+        <li>职位卡片与详情页增加 “Follow company”；已关注显示 “Following”。</li>
+        <li>首页 Saved 视图增加 Jobs / Companies 两个标签；Companies 下列出已关注公司及当前开放职位数。</li>
+        <li>本期关注公司不触发任何邮件或推送；设置页必须明确写出这一点，避免用户误以为会收到提醒。</li>
+        <li>取消关注立即生效，不影响已收藏的该公司的职位。</li>
+      </ul>
+
+      <h3>职位失效</h3>
+      <ul>
+        <li>职位过期后 7 天内仍可搜索，标记 “Closed”（沿用 v1）。</li>
+        <li>收藏列表中 Closed 职位保留，Apply 按钮替换为 “View original posting”（若仍可访问）；否则只显示状态说明。</li>
+        <li>职位从数据库移除：收藏项标记 Removed，保留 30 天 <span class="mono">[TBD]</span> 后自动清理，并给出一次安静提示。</li>
+        <li>对比集中的职位被移除：只移除该项，其余保留（沿用 v1 6.3）。</li>
+      </ul>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="fr-admin">
+      <h2><span class="num">06.5</span>产品优化看板（内部，只读）</h2>
+      <div class="section-rule"></div>
+
+      <p><span class="pill">FR-ADMIN</span> 目标：用一套稳定的口径回答“用户在哪一步流失、哪种行为带来申请”，而不是堆一张什么都有的图表墙。</p>
+
+      <div class="callout note">
+        <span class="tag">用途限定</span>
+        本看板只用于<strong>产品体验优化</strong>：不做运营、不做营销、不做广告投放、不做用户画像、不对外销售数据。
+        看板只读，不能修改职位、排名或用户数据。第一方采集，不接入第三方分析厂商。
+      </div>
+
+      <h3>采集边界（只收优化所需）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="t-col-wide">会采集</th><th class="t-col-wide">不会采集</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>页面浏览、语言、辖区档案、同意状态</td>
+              <td>邮箱、姓名、简历、申请材料、证件、支付信息</td>
+            </tr>
+            <tr>
+              <td>筛选字段名、规范化后的值区间、结果数、零结果</td>
+              <td>地点输入框的原始自由文本</td>
+            </tr>
+            <tr>
+              <td>详情打开、对比加入/移除/打开、申请点击、收藏/取消收藏</td>
+              <td>完整 IP、精确地理位置、设备指纹</td>
+            </tr>
+            <tr>
+              <td>登录漏斗（仅当本期保留登录时）、同意选择</td>
+              <td>跨站行为、广告 ID、第三方数据、会话回放、热图</td>
+            </tr>
+            <tr>
+              <td>伪匿名 UUID 与会话 ID</td>
+              <td>键盘输入内容、剪贴板、页面正文、鼠标轨迹</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted">
+        原则：能回答“哪里需要改”就够，不为“以后可能有用”多收一个字段。新增事件必须写明对应的产品决策，否则不进入采集清单。
+      </p>
+
+      <h3>访问与安全</h3>
+      <ul>
+        <li>独立地址，不出现在站点导航；禁止搜索引擎索引。</li>
+        <li>与前台相同的邮箱登录，但仅允许内部邮箱名单；建议开启二次验证 <span class="mono">[TBD]</span>。</li>
+        <li>角色：Analyst（只读 + 脱敏导出）、Owner（角色管理 + 理由化查看邮箱）。</li>
+        <li>会话 8 小时后失效；连续失败登录锁定；所有敏感查看写入审计日志。</li>
+        <li>后台只读：本期不能修改职位、排名或用户数据。</li>
+      </ul>
+
+      <h3>后台视图</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>视图</th><th>要回答的问题</th><th>核心内容</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>1. 概览 Overview</strong></td><td>本周产品整体是否在正常运转？</td><td>访问量、活跃用户、登录转化、申请点击、对比会话、同意覆盖率；与上一周期对比。</td></tr>
+            <tr><td><strong>2. 登录漏斗 Login funnel</strong></td><td>登录页在哪一步流失？</td><td>登录页浏览 → 提交邮箱 → 邮件点击 → 登录成功；按语言、辖区、设备分段。</td></tr>
+            <tr><td><strong>3. 筛选与发现 Discovery</strong></td><td>哪些筛选真正带来详情打开？</td><td>有结果筛选率、零结果率、打开详情前筛选中位数、Top 职位类别/地点、排序使用。</td></tr>
+            <tr><td><strong>4. 对比与申请 Compare</strong></td><td>对比是否帮助了申请？</td><td>对比激活率、平均对比集大小、对比→申请点击、对比辅助申请占比（领先指标）。</td></tr>
+            <tr><td><strong>5. 内容质量 Content</strong></td><td>哪些职位/公司值得继续投入？</td><td>详情浏览、申请点击率（按职位/公司）、过期举报、自动隐藏数量、重复合并数量。</td></tr>
+            <tr><td><strong>6. 同意与隐私 Consent</strong></td><td>用户在如何选择？哪个市场需要改文案？</td><td>横幅曝光→选择率、接受/拒绝/自定义分布（按档案与语言）、政策版本分布、撤回次数。</td></tr>
+            <tr><td><strong>7. 用户与留存 Users</strong></td><td>注册用户是否回来？收藏是否被使用？</td><td>注册数、MAU、人均收藏数、同步采用率、D1/D7/D28 留存（伪匿名 UUID）。</td></tr>
+            <tr><td><strong>8. 数据健康 Data health</strong></td><td>我现在看到的数字可信吗？</td><td>事件量、缺失属性比例、迟到事件、重复事件、允许内部流量排除、最新更新时间。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>指标口径（唯一版本）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="t-col-id">ID</th><th>指标</th><th>计算口径</th><th>数据来源</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>M1</td><td>有效筛选搜索率</td><td>应用至少一个筛选且结果数 ≥ 1 的会话 ÷ 应用了筛选的会话</td><td>filter_change + 结果数</td></tr>
+            <tr><td>M2</td><td>详情打开率</td><td>至少打开一次详情的会话 ÷ 首页会话</td><td>job_detail_open</td></tr>
+            <tr><td>M3</td><td>打开详情前使用筛选中位数</td><td>会话内首次打开详情前发生的不同筛选变更次数，取中位数</td><td>filter_change + job_detail_open</td></tr>
+            <tr><td>M4</td><td>对比激活率</td><td>至少加入一次对比的会话 ÷ 至少打开一次详情的会话</td><td>compare_add + job_detail_open</td></tr>
+            <tr><td>M5</td><td><strong>对比辅助申请率（领先指标）</strong></td><td>来源为对比页的申请点击，或点击时该职位在对比集中的申请点击 ÷ 全部申请点击</td><td>apply_click + compare 状态</td></tr>
+            <tr><td>M6</td><td>申请点击率</td><td>申请点击 ÷ 详情浏览（按详情页/对比页分别计算）</td><td>apply_click + page_view</td></tr>
+            <tr><td>M7</td><td>登录转化率</td><td>登录成功数 ÷ 登录页浏览数</td><td>login_success + login_page_view</td></tr>
+            <tr><td>M8</td><td>魔法链接完成率</td><td>链接点击成功数 ÷ 邮件发送成功数</td><td>login_link_clicked + login_link_sent</td></tr>
+            <tr><td>M9</td><td>收藏同步采用率</td><td>首次登录后选择“同步全部”的用户数 ÷ 本机有收藏的新登录用户数</td><td>sync_prompt + sync_accept</td></tr>
+            <tr><td>M10</td><td>同意覆盖率</td><td>分析同意有效的会话数 ÷ 全部会话数；每个指标旁并列展示</td><td>consent_record + session</td></tr>
+            <tr><td>M11</td><td>过期举报率</td><td>收到过期/错误举报的职位数 ÷ 在架职位数</td><td>report_listing + 职位总量</td></tr>
+            <tr><td>M12</td><td>登录取胜率（观察项）</td><td>登录后 7 天内再次访问的用户数 ÷ 登录成功用户数</td><td>login_success + 后续 page_view</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>事件清单（最小集）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>事件名</th><th>触发</th><th>必填属性</th><th>含个人数据</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">page_view</td><td>页面可见</td><td>page、lang、region_profile、consent_state</td><td>否</td></tr>
+            <tr><td class="mono">filter_change</td><td>任一筛选变化后结果更新</td><td>filter_name、value_bucket、active_filter_count、result_count</td><td>否（地点只保留城市/国家，不保留自由输入原文）</td></tr>
+            <tr><td class="mono">filter_reset</td><td>点击重置</td><td>active_filter_count_before</td><td>否</td></tr>
+            <tr><td class="mono">sort_change</td><td>切换排序</td><td>order（newest / oldest）</td><td>否</td></tr>
+            <tr><td class="mono">job_detail_open</td><td>打开详情</td><td>job_id、company_id、source（card / compare / related）</td><td>否</td></tr>
+            <tr><td class="mono">apply_click</td><td>点击外部申请</td><td>job_id、source（detail / compare）、compare_set_size、logged_in</td><td>否</td></tr>
+            <tr><td class="mono">save_job / unsave_job</td><td>收藏/取消收藏职位</td><td>job_id、source、logged_in</td><td>否</td></tr>
+            <tr><td class="mono">save_company / unsave_company</td><td>关注/取消关注公司</td><td>company_id、source、logged_in</td><td>否</td></tr>
+            <tr><td class="mono">compare_add / compare_remove</td><td>加入/移出对比</td><td>job_id、entry_point、set_size_before / after</td><td>否</td></tr>
+            <tr><td class="mono">compare_open</td><td>打开对比页</td><td>entry_point、set_size</td><td>否</td></tr>
+            <tr><td class="mono">compare_apply_click</td><td>对比页点击申请</td><td>job_id、set_size</td><td>否</td></tr>
+            <tr><td class="mono">login_page_view</td><td>打开登录页</td><td>source、next_page</td><td>否</td></tr>
+            <tr><td class="mono">login_submit</td><td>提交邮箱</td><td>source</td><td>否（不记录邮箱）</td></tr>
+            <tr><td class="mono">login_link_sent</td><td>邮件发送成功</td><td>result</td><td>否</td></tr>
+            <tr><td class="mono">login_link_clicked</td><td>点击邮件链接</td><td>result（success / expired / used）</td><td>否</td></tr>
+            <tr><td class="mono">login_success</td><td>建立会话</td><td>is_new_account、locale</td><td>否</td></tr>
+            <tr><td class="mono">sync_prompt / sync_accept</td><td>首次登录合并提示/接受</td><td>local_jobs_count、local_companies_count</td><td>否</td></tr>
+            <tr><td class="mono">consent_banner_view</td><td>横幅可见</td><td>region_profile、policy_version、lang</td><td>否</td></tr>
+            <tr><td class="mono">consent_choice</td><td>做出选择</td><td>action（accept_all / reject_all / custom）、categories、region_profile、policy_version、lang、surface</td><td>否</td></tr>
+            <tr><td class="mono">consent_change</td><td>在设置中修改/撤回</td><td>from、to、region_profile</td><td>否</td></tr>
+            <tr><td class="mono">settings_view</td><td>打开设置分区</td><td>tab</td><td>否</td></tr>
+            <tr><td class="mono">account_export / account_delete_request</td><td>导出/申请删除</td><td>result</td><td>否</td></tr>
+            <tr><td class="mono">report_listing</td><td>举报职位</td><td>job_id、reason、reporter_type</td><td>否</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted">
+        属性中禁止出现邮箱、姓名、简历、自由文本、完整 IP、精确地理位置。地点筛选只记录规范化后的城市/国家；无法规范化时不记录原文。
+      </p>
+
+      <h3>分段与筛选</h3>
+      <ul>
+        <li>时间范围：今天 / 近 7 天 / 近 30 天 / 近 90 天 / 自定义（导出上限 90 天）。</li>
+        <li>必选分段：界面语言、辖区档案、登录状态、设备类型。</li>
+        <li>可选分段：职位类别、公司、来源页面。</li>
+        <li>所有数字旁显示统计口径提示与最后更新时间；数据延迟超过阈值时给出黄色提示 <span class="mono">[TBD 阈值]</span>。</li>
+      </ul>
+
+      <h3>隐私约束</h3>
+      <ul>
+        <li>默认只看聚合与 UUID，不显示邮箱、不提供“按邮箱搜索用户”。</li>
+        <li>Owner 查看单个账户邮箱时必须：输入理由 → 二次确认 → 写入审计日志；单次展示，不支持批量导出。</li>
+        <li>CSV 导出只含聚合结果或脱敏 UUID，不含邮箱。</li>
+        <li>后台自身也受同意约束：未同意分析的会话不出现在任何用户级视图，只计入“未同意”汇总。</li>
+      </ul>
+
+      <h3>状态与异常</h3>
+      <ul>
+        <li>无数据：显示“该时间段没有满足条件的事件”，并给出清空筛选的按钮。</li>
+        <li>权限不足：显示可申请的角色说明，不泄露任何数字。</li>
+        <li>查询超时：显示重试，不展示部分错误数据。</li>
+        <li>事件管道延迟：显示最后成功更新时间，不把旧数据伪装成实时。</li>
+      </ul>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="fr-site">
+      <h2><span class="num">06.6</span>既有页面改动</h2>
+      <div class="section-rule"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>位置</th><th>改动</th><th>保持不变</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Header</td>
+              <td>访客显示 “Sign in”；登录后显示账户菜单（Settings / Saved / Sign out）。保留语言切换与对比计数。</td>
+              <td>无横幅广告、无通知铃、无头像上传。</td>
+            </tr>
+            <tr>
+              <td>Footer</td>
+              <td>增加 Privacy Policy、Terms、Cookie settings、Data requests 入口。</td>
+              <td>类目目录、地区目录、雇主联系、更新说明。</td>
+            </tr>
+            <tr>
+              <td>首页</td>
+              <td>收藏按钮增加 “Saved on this device / Synced” 状态；Saved 视图增加 Jobs / Companies 标签；收藏后出现非阻塞同步提示。</td>
+              <td>五个筛选器、排序、重置、卡片六要素、对比栏、Apply 外部跳转。</td>
+            </tr>
+            <tr>
+              <td>详情页</td>
+              <td>增加 “Follow company”；收藏状态区分本机/账户；增加 “Sign in to sync” 次要入口。</td>
+              <td>标题、描述、地点、公司、薪资、经验、Apply、Related jobs、Verified 时间。</td>
+            </tr>
+            <tr>
+              <td>对比页</td>
+              <td>每个职位增加申请按钮与来源标记；保留 2–4 个限制；不引入登录门槛。</td>
+              <td>拖动排序、移除、添加、货币归一化、差异高亮。</td>
+            </tr>
+            <tr>
+              <td>路由与状态</td>
+              <td>登录跳转携带 <span class="mono">next</span>；登录后回到原筛选列表或设置页；语言与筛选状态继续写入 URL。</td>
+              <td>v1 的返回逻辑、滚动位置恢复、URL 筛选状态。</td>
+            </tr>
+            <tr>
+              <td>本地存储</td>
+              <td>保留 <span class="mono">rb_lang</span>、<span class="mono">rb_saved_jobs</span>、<span class="mono">rb_compare_jobs</span>；新增同意状态键；不做破坏性迁移。</td>
+              <td>对比集始终只在本机；语言偏好本机与账户双写。</td>
+            </tr>
+            <tr>
+              <td>四语文案</td>
+              <td>新增登录、同意、设置、账户、后台相关文案；四个语言键必须一一对应，不允许缺键回退到英文（法律文本尤其禁止）。</td>
+              <td>既有日期本地化、Apply 动作语言、薪资带币种与周期。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout note">
+        <span class="tag">文案原则</span>
+        登录页说“为什么需要邮箱”，不说“创建您的账户以解锁完整体验”；
+        同意横幅说“我们想测量什么”，不说“我们重视您的隐私”；
+        设置页说“删除后会发生什么”，不说“永久删除”却不解释同意记录的保留。
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="rules">
+      <h2><span class="num">07</span>共享规则</h2>
+      <div class="section-rule"></div>
+
+      <h3>辖区判定的优先级</h3>
+      <pre class="flow">识别国家（IP）
+   │
+   ├─ 有结果 ──► 映射档案 A
+   └─ 失败/未知 ──► 档案 P0（最严格）
+   │
+   ▼
+用户手动声明档案 B
+   │
+   ▼
+生效档案 = 更严格(A, B)
+   │
+   ▼
+登录账户继承最近一次生效档案；不因语言切换而改变</pre>
+
+      <h3>留存与删除</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>数据</th><th>默认留存</th><th>删除方式</th><th>备注</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>账户与收藏</td><td>账户存续期间</td><td>删除请求后 30 天硬删除 <span class="mono">[TBD]</span></td><td>30 天内登录可撤销</td></tr>
+            <tr><td>分析事件（原始）</td><td>13 个月 <span class="mono">[TBD]</span></td><td>到期自动删除或聚合</td><td>聚合后不再可识别到 UUID</td></tr>
+            <tr><td>分析聚合</td><td>24 个月 <span class="mono">[TBD]</span></td><td>到期删除</td><td>用于同比</td></tr>
+            <tr><td>同意记录</td><td>撤回后 24 个月 <span class="mono">[TBD，需法务确认]</span></td><td>到期匿名化</td><td>用于证明当时同意有效</td></tr>
+            <tr><td>后台审计日志</td><td>24 个月 <span class="mono">[TBD]</span></td><td>到期归档/删除</td><td>只追加</td></tr>
+            <tr><td>会话</td><td>30 天或退出时</td><td>过期/撤销</td><td>删除账户时立即全部撤销</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>身份与安全（产品层）</h3>
+      <ul>
+        <li>魔法链接单次使用、15 分钟过期；重发有冷却与频率上限。</li>
+        <li>导出与删除必须重新验证身份，防止会话被劫持后批量带走数据。</li>
+        <li>后台敏感操作（查看邮箱、改角色）必须二次确认并留痕。</li>
+        <li>不在分析属性、URL 参数、日志中写入邮箱或令牌。</li>
+        <li>所有外部跳转使用新标签页，且不携带用户标识到雇主站点。</li>
+      </ul>
+
+      <h3>多语言与法律文本治理</h3>
+      <ul>
+        <li>四个语言键集合必须完全一致；构建时检查缺键，缺键直接失败，不允许静默回退。</li>
+        <li>法律文本（Privacy、Terms、Cookie 说明）按语言独立版本管理，版本号一致；不得用机器翻译直接上线。</li>
+        <li>同意横幅上的文案与隐私政策中的类别定义必须逐字一致，避免“横幅说分析、政策说营销”的错位。</li>
+        <li>时间、薪资、经验带沿用 v1 规范：币种 + 周期；经验写区间；日期按浏览器时区。</li>
+      </ul>
+
+      <h3>可访问性</h3>
+      <ul>
+        <li>同意横幅、登录表单、设置页、后台均需键盘可达；焦点顺序合理，打开偏好中心时焦点进入，关闭后返回触发按钮。</li>
+        <li>错误提示不能只靠颜色；对比度满足 WCAG 2.1 AA。</li>
+        <li>动画可被“减少动态效果”系统设置关闭。</li>
+      </ul>
+
+      <h3>失败与恢复</h3>
+      <ul>
+        <li>任何收藏/关注操作失败都要回滚界面状态并提示，不允许“看起来成功、实际没保存”。</li>
+        <li>任何服务端错误都不应导致本机收藏被清空。</li>
+        <li>登录邮件发送失败时，保留用户已输入的邮箱，提供重试。</li>
+      </ul>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="metrics">
+      <h2><span class="num">08</span>指标与决策方式</h2>
+      <div class="section-rule"></div>
+
+      <p>
+        本次后台不是为了“看数字”，而是为了决定下一版改什么。因此只保留能触发动作的指标，
+        并强制按语言、辖区、登录状态分段。统一口径见 6.5 的 M1–M12。
+      </p>
+
+      <h3>领先指标与护栏</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>类型</th><th>指标</th><th>为什么看它</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>领先</strong></td><td>对比辅助申请率（M5）</td><td>v1 的核心假设是“对比帮助决策”。如果对比会话并不带来更多申请，应优先改对比体验，而不是加更多职位。</td></tr>
+            <tr><td><strong>领先</strong></td><td>登录转化率（M7）与魔法链接完成率（M8）</td><td>区分“不想登录”和“收不到邮件/链接失效”，对应完全不同的改法。</td></tr>
+            <tr><td><strong>护栏</strong></td><td>访客申请点击率（M6，未登录分段）</td><td>登录功能不得降低未登录用户的申请意愿。</td></tr>
+            <tr><td><strong>护栏</strong></td><td>同意拒绝率与同意覆盖率（M10）</td><td>拒绝率异常高说明文案或默认值有问题；覆盖率过低说明后台数据不可当全量。</td></tr>
+            <tr><td><strong>护栏</strong></td><td>过期举报率（M11）</td><td>增长不能建立在过期职位上。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>从数据到动作</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>观察</th><th>优先检查</th><th>可能动作</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>登录页浏览高、提交低</td><td>表单是否被理解为“必须注册”；文案是否强调跨设备价值</td><td>改文案、把登录入口从“Sign in”改为“Sync saves”；不增加强制登录</td></tr>
+            <tr><td>提交高、链接点击低</td><td>邮件送达、发件域名、垃圾箱、移动端邮件客户端</td><td>改发件配置与邮件文案；增加“打开邮箱”指引；不缩短链接有效期</td></tr>
+            <tr><td>对比激活低</td><td>Select 按钮是否可见；卡片上 Compare 与 Select 是否混淆</td><td>合并两个动作、强化选中态；不改 2–4 的硬限制</td></tr>
+            <tr><td>对比会话多、申请少</td><td>对比表是否缺少决策关键行；Apply 是否够显眼</td><td>增加 Requirement 行、固定 Apply 列；不做“推荐某个职位”</td></tr>
+            <tr><td>某辖区拒绝率显著高</td><td>横幅措辞、默认开关、是否被理解为“必须接受”</td><td>改文案与按钮权重；绝不把拒绝藏起来</td></tr>
+            <tr><td>某类筛选零结果率高</td><td>筛选值与数据覆盖是否不匹配</td><td>调整类目、增加空结果恢复建议；不伪造职位</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="small muted">
+        本期不设数字目标，因为当前没有可信基线。上线后先积累至少 4 周数据，再按分段设定目标 <span class="mono">[TBD]</span>。
+        任何目标都不得以降低同意标准或默认追踪为代价。
+      </p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="risks">
+      <h2><span class="num">09</span>依赖、风险与阻塞</h2>
+      <div class="section-rule"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="t-col-id">ID</th><th>风险 / 依赖</th><th>影响</th><th>处理建议</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>R1</td>
+              <td><strong>静态托管无法承载账户与后台</strong></td>
+              <td>阻塞上线；只能做假数据原型</td>
+              <td>先确定可运行服务端的托管与数据存储方案；PRD 确认后单独出技术方案。GitHub Pages 继续作为前端静态托管可以，但不能承担登录与事件写入。</td>
+            </tr>
+            <tr>
+              <td>R2</td>
+              <td>四市场法律复核未完成</td>
+              <td>可能导致同意流程、留存期限、跨境传输返工</td>
+              <td>上线前由法务/DPO 逐条确认；本文件所有法律描述都标记为草案。</td>
+            </tr>
+            <tr>
+              <td>R3</td>
+              <td>中国大陆数据本地化与跨境</td>
+              <td>可能需要独立部署与独立数据存储，成本与架构影响大</td>
+              <td>在 Q5 明确是否服务中国大陆用户；若服务，单独评估。</td>
+            </tr>
+            <tr>
+              <td>R4</td>
+              <td>魔法链接送达率</td>
+              <td>登录漏斗在第一步流失</td>
+              <td>配置 SPF/DKIM/DMARC；监控送达与点击；提供重发；不因送达问题改回密码登录。</td>
+            </tr>
+            <tr>
+              <td>R5</td>
+              <td>登录摩擦降低申请率</td>
+              <td>违背 v1 零摩擦原则</td>
+              <td>登录保持可选；所有提示非阻塞；用未登录分段的申请点击率做护栏。</td>
+            </tr>
+            <tr>
+              <td>R6</td>
+              <td>同意覆盖率低导致数据偏差</td>
+              <td>后台结论可能只代表愿意被追踪的用户</td>
+              <td>每个指标强制显示覆盖率；覆盖率低于阈值时只做定性判断 <span class="mono">[TBD]</span>。</td>
+            </tr>
+            <tr>
+              <td>R7</td>
+              <td>后台权限过宽</td>
+              <td>内部窥探风险，损害信任</td>
+              <td>默认聚合；邮箱查看需理由 + 审计；不提供批量导出邮箱。</td>
+            </tr>
+            <tr>
+              <td>R8</td>
+              <td>本机收藏合并失败导致数据“消失”</td>
+              <td>最严重的用户信任损失</td>
+              <td>并集合并、失败回滚、保留本机副本；合并前明确展示数量。</td>
+            </tr>
+            <tr>
+              <td>R9</td>
+              <td>四语法律文本不同步</td>
+              <td>某一语言版本承诺不一致，产生合规风险</td>
+              <td>版本号统一；缺键构建失败；法律文本人工审校。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="questions">
+      <h2><span class="num">10</span>待确认问题</h2>
+      <div class="section-rule"></div>
+
+      <p>以下问题会改变核心流程、合规边界或成本，需在开发前确认。其余细节已按标记的假设推进。</p>
+      <p class="small">
+        <strong>已确认：</strong>Land in = 邮箱登录页；“EN”= 国际英语默认，不因语言默认追踪，美国按 IP 单独识别；
+        数据只用于产品体验优化；第一方采集，不接第三方分析厂商；看板只读。
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="t-col-id">ID</th><th>问题</th><th>为什么重要</th><th>建议默认</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Q1</td>
+              <td><strong>本期是否保留邮箱登录？</strong>如果匿名采集已能拿到优化数据，是否先不做账户？</td>
+              <td>登录不是采集数据的前提；它只解决跨设备收藏与账户设置。保留登录会增加工作量、PII 与合规成本。</td>
+              <td><strong>先不做登录</strong>：匿名采集 + 本机收藏页 + 同意管理；若之后需要跨设备同步，再做可选登录。</td>
+            </tr>
+            <tr>
+              <td>Q2</td>
+              <td>若保留登录，是可选还是必须？</td>
+              <td>决定是否破坏 v1 零摩擦浏览与申请路径</td>
+              <td><strong>可选</strong>：访客可完成全部核心动作，登录只用于同步与设置</td>
+            </tr>
+            <tr>
+              <td>Q3</td>
+              <td>服务端与数据存储放在哪里？</td>
+              <td>静态托管无法实现事件写入与看板；若不做登录，仍需要事件接收与存储</td>
+              <td>先确认可承载服务的托管方案，再进入开发；本期不锁定具体厂商</td>
+            </tr>
+            <tr>
+              <td>Q4</td>
+              <td>匿名会话是否要与登录用户关联？</td>
+              <td>关联后可看单用户旅程，但隐私与合规成本更高</td>
+              <td>仅在登录后关联到随机 UUID；默认看板仍只显示聚合</td>
+            </tr>
+            <tr>
+              <td>Q5</td>
+              <td>是否服务中国大陆用户？数据是否必须本地化？</td>
+              <td>影响部署、跨境传输与合规成本</td>
+              <td>先确认目标市场；若服务，单独做本地化评估</td>
+            </tr>
+            <tr>
+              <td>Q6</td>
+              <td>后台是否允许查看用户邮箱？</td>
+              <td>涉及内部权限与隐私承诺</td>
+              <td>默认聚合 + UUID；Owner 理由化查看并审计</td>
+            </tr>
+            <tr>
+              <td>Q7</td>
+              <td>账户删除的宽限期与数据留存期限？</td>
+              <td>影响用户预期与法律义务</td>
+              <td>删除宽限 30 天；事件 13 个月；同意记录撤回后 24 个月，均需法务确认</td>
+            </tr>
+            <tr>
+              <td>Q8</td>
+              <td>收藏公司是否要发新职位邮件？</td>
+              <td>会引入营销同意与邮件基础设施，超出本期</td>
+              <td><strong>本期不发</strong>；只做列表与筛选，设置页明确说明</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <section id="decisions">
+      <h2><span class="num">11</span>本次评审需拍板</h2>
+      <div class="section-rule"></div>
+
+      <p>请按编号回复“同意 / 改成……”。未回复项将按建议默认推进，并在开发前再次确认。</p>
+
+      <div class="decision">
+        <div class="d-num">D1</div>
+        <div>
+          <div class="d-title">确认这是版本演进，不是对 v1 的修订</div>
+          <div class="d-body">v1 的“不收集个人数据”只描述 v1。v2 是后续版本，新增邮箱账户与体验分析；需要更新对外说明，但底线不变：不收简历、不做站内申请、不做雇主后台、不用于广告或对外销售。</div>
+        </div>
+        <div class="d-rec"><b>建议</b>确认。对外统一表述为“v1 不收集；v2 只收集邮箱与匿名体验事件”。</div>
+      </div>
+
+      <div class="decision">
+        <div class="d-num">D2</div>
+        <div>
+          <div class="d-title">登录保持可选</div>
+          <div class="d-body">访客可筛选、本机收藏、对比、跳转申请；登录只用于跨设备同步与设置。</div>
+        </div>
+        <div class="d-rec"><b>建议</b>可选。用未登录申请点击率做护栏。</div>
+      </div>
+
+      <div class="decision">
+        <div class="d-num">D3</div>
+        <div>
+          <div class="d-title">语言与辖区解耦，默认最严格</div>
+          <div class="d-body">按 IP 国家决定 Cookie 规则；无法识别时先同意后追踪；用户声明只能让规则更严格，不能更宽松。</div>
+        </div>
+        <div class="d-rec"><b>建议</b>采用。否则德国英文用户会被错误地默认追踪。</div>
+      </div>
+
+      <div class="decision">
+        <div class="d-num">D4</div>
+        <div>
+          <div class="d-title">后台默认只看聚合与 UUID</div>
+          <div class="d-body">邮箱仅 Owner 在填写理由后可单条查看，并写入审计；不提供邮箱批量导出。</div>
+        </div>
+        <div class="d-rec"><b>建议</b>采用。既满足监控，又避免无边界的用户窥探。</div>
+      </div>
+
+      <div class="decision">
+        <div class="d-num">D5</div>
+        <div>
+          <div class="d-title">先确认服务端，再进入开发</div>
+          <div class="d-body">GitHub Pages 只能继续托管前端；账户、事件、后台需要可运行服务端的环境。</div>
+        </div>
+        <div class="d-rec"><b>建议</b>把技术方案作为下一步独立产出；未确认前只做假数据原型。</div>
+      </div>
+
+      <div class="decision">
+        <div class="d-num">D6</div>
+        <div>
+          <div class="d-title">收藏公司本期不发邮件</div>
+          <div class="d-body">只做关注列表与筛选；不引入营销同意、邮件模板与退订基础设施。</div>
+        </div>
+        <div class="d-rec"><b>建议</b>本期不做；放入 P1 并单独立项。</div>
+      </div>
+
+      <footer class="doc-footer">
+        <span>Robot Works · PRD v2.0-draft</span>
+        <span>Prepared 2026-10-28 · For review</span>
+      </footer>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>
