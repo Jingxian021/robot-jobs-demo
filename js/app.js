@@ -21,6 +21,8 @@ const I18N = {
     date_any: 'Any time',
     date_week: 'Past week',
     date_month: 'Past month',
+    loc_all: 'All locations',
+    loc_selected: 'selected',
     pos_all: 'All positions',
     sal_any: 'Any',
     yoe_any: 'Any',
@@ -132,6 +134,8 @@ const I18N = {
     date_any: 'すべて',
     date_week: '過去1週間',
     date_month: '過去1ヶ月',
+    loc_all: 'すべての場所',
+    loc_selected: '件選択中',
     pos_all: 'すべての職種',
     sal_any: '指定なし',
     yoe_any: '指定なし',
@@ -243,6 +247,8 @@ const I18N = {
     date_any: '任意时间',
     date_week: '过去一周',
     date_month: '过去一月',
+    loc_all: '全部地点',
+    loc_selected: '项已选',
     pos_all: '所有职位',
     sal_any: '不限',
     yoe_any: '不限',
@@ -354,6 +360,8 @@ const I18N = {
     date_any: 'Jederzeit',
     date_week: 'Letzte Woche',
     date_month: 'Letzter Monat',
+    loc_all: 'Alle Standorte',
+    loc_selected: 'ausgewählt',
     pos_all: 'Alle Positionen',
     sal_any: 'Egal',
     yoe_any: 'Egal',
@@ -561,7 +569,7 @@ function generateJobs(count = 24) {
     const salaryMax = currency === 'CNY' ? 80000 : 250000;
     const salary = Math.floor(salaryMin + Math.random() * (salaryMax - salaryMin));
     const salaryTop = Math.floor(salary * (1.2 + Math.random() * 0.6));
-    const postedDaysAgo = Math.floor(Math.random() * 30);
+    const postedDaysAgo = Math.floor(Math.random() * 60);
     const posted = new Date();
     posted.setDate(posted.getDate() - postedDaysAgo);
     const tagCount = 2 + Math.floor(Math.random() * 4);
@@ -671,7 +679,10 @@ function filterJobs(jobs, filters) {
       if (filters.date === 'week' && job.postedDaysAgo > 7) return false;
       if (filters.date === 'month' && job.postedDaysAgo > 30) return false;
     }
-    if (filters.location) { const q = filters.location.toLowerCase(); if (!job.location.toLowerCase().includes(q)) return false; }
+    if (filters.location) {
+      const picked = filters.location.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
+      if (picked.length && !picked.some((loc) => job.location.toLowerCase().includes(loc))) return false;
+    }
     if (filters.position && job.category !== filters.position) return false;
     if (filters.salary) { const min = parseInt(filters.salary, 10); if (job.salaryTop < min) return false; }
     if (filters.yoe && job.yoe !== filters.yoe) return false;
@@ -712,10 +723,7 @@ function renderJobList(container, jobs, callbacks) {
       <div class="empty-state">
         <h3>${callbacks.savedMode ? t('saved_empty_title') : t('empty_title')}</h3>
         <p>${callbacks.savedMode ? t('saved_empty_body') : t('empty_body')}</p>
-        ${callbacks.savedMode ? '' : `<button class="btn btn-outline" id="reset-filters">${t('empty_reset')}</button>`}
       </div>`;
-    const r = document.getElementById('reset-filters');
-    if (r) r.addEventListener('click', callbacks.resetFilters);
     return;
   }
   container.innerHTML = jobs.map(renderJobRow).join('');
@@ -830,19 +838,59 @@ function initHome() {
   const filterCountEl = document.getElementById('active-filter-count');
   const inputs = {
     date: document.getElementById('filter-date'),
-    location: document.getElementById('filter-location'),
     position: document.getElementById('filter-position'),
     salary: document.getElementById('filter-salary'),
     yoe: document.getElementById('filter-yoe'),
     company: document.getElementById('filter-company'),
   };
+  const locWrap = document.getElementById('filter-location');
+  const locBtn = document.getElementById('filter-location-btn');
+  const locPanel = document.getElementById('filter-location-panel');
+  const LOCATION_OPTIONS = Array.from(new Set(JOBS.map((j) => j.country)))
+    .filter((country) => country !== 'Switzerland')
+    .sort();
 
   let filters = readFiltersFromURL();
   let savedMode = false;
+
+  function buildLocationOptions() {
+    if (!locPanel) return;
+    locPanel.innerHTML = LOCATION_OPTIONS.map((country) =>
+      `<label class="multi-option"><input type="checkbox" value="${country}"><span>${country}</span></label>`
+    ).join('');
+  }
+
+  function selectedLocations() {
+    if (!locPanel) return [];
+    return Array.from(locPanel.querySelectorAll('input:checked')).map((el) => el.value);
+  }
+
+  function updateLocationLabel() {
+    if (!locBtn) return;
+    const picked = selectedLocations();
+    const label = locBtn.querySelector('.multi-label');
+    if (label) {
+      label.textContent = picked.length === 0 ? t('loc_all')
+        : picked.length <= 2 ? picked.join(', ')
+        : `${picked.length} ${t('loc_selected')}`;
+    }
+    locBtn.classList.toggle('has-value', picked.length > 0);
+  }
+
+  function setLocationSelection(value) {
+    if (!locPanel) return;
+    const picked = (value || '').split(',').map((s) => s.trim()).filter(Boolean);
+    locPanel.querySelectorAll('input').forEach((el) => { el.checked = picked.includes(el.value); });
+    updateLocationLabel();
+  }
+
   Object.entries(inputs).forEach(([key, el]) => { if (el) el.value = filters[key] || ''; });
+  buildLocationOptions();
+  setLocationSelection(filters.location);
 
   function apply() {
     filters = Object.fromEntries(Object.entries(inputs).map(([k, el]) => [k, el?.value || '']));
+    filters.location = selectedLocations().join(',');
     writeFiltersToURL(filters);
     let filtered = filterJobs(JOBS, filters);
     filtered = filtered.slice().sort((a, b) =>
@@ -864,16 +912,29 @@ function initHome() {
       track('filter_change', { field: k, value: inputs[k].value || 'any' });
     });
   });
-  let locationTimer;
-  inputs.location?.addEventListener('input', () => {
-    clearTimeout(locationTimer);
-    locationTimer = setTimeout(() => {
-      track('filter_change', { field: 'location', value: inputs.location.value ? 'typed' : 'cleared' });
-    }, 1200);
-  });
+  if (locBtn && locWrap && locPanel) {
+    locBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = locWrap.classList.toggle('open');
+      locBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    locPanel.addEventListener('change', () => {
+      updateLocationLabel();
+      apply();
+      track('filter_change', { field: 'location', value: selectedLocations().length ? 'selected' : 'cleared' });
+    });
+    document.addEventListener('click', (e) => {
+      if (!locWrap.contains(e.target)) {
+        locWrap.classList.remove('open');
+        locBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
 
   function resetFilters() {
     Object.values(inputs).forEach((el) => { if (el) el.value = ''; });
+    if (locPanel) locPanel.querySelectorAll('input').forEach((el) => { el.checked = false; });
+    updateLocationLabel();
     savedMode = false;
     document.getElementById('saved-toggle')?.classList.remove('active');
     track('filter_reset');
