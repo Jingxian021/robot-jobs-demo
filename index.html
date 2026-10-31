@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20261031">
 </head>
 <body data-page="home">
   <header class="header">
@@ -54,8 +54,14 @@
           </select>
         </div>
         <div class="filter">
-          <label for="filter-location" data-i18n="filter_location">filter_location</label>
-          <input type="text" id="filter-location" data-i18n-ph="filter_location" placeholder="Location">
+          <label for="filter-location-btn" data-i18n="filter_location">filter_location</label>
+          <div class="multi-select" id="filter-location">
+            <button type="button" class="multi-btn" id="filter-location-btn" aria-haspopup="true" aria-expanded="false">
+              <span class="multi-label" data-i18n="loc_all">loc_all</span>
+              <span class="multi-caret" aria-hidden="true">▾</span>
+            </button>
+            <div class="multi-panel" id="filter-location-panel"></div>
+          </div>
         </div>
         <div class="filter">
           <label for="filter-position" data-i18n="filter_position">filter_position</label>
@@ -539,7 +545,7 @@
     </div>
   </footer>
 
-  <script src="js/analytics.js?v=20261029"></script>
-  <script src="js/app.js?v=20261029"></script>
+  <script src="js/analytics.js?v=20261031"></script>
+  <script src="js/app.js?v=20261031"></script>
 
 </body></html>
