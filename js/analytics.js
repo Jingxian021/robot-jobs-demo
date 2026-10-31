@@ -226,9 +226,9 @@
     if (!API_BASE) return;
     var c = getConsent();
     if (!c.choice || c.policy !== POLICY) {
-      // first visit or policy changed
-      fetch(API_BASE + '/v1/consent-context').then(function (r) { return r.json(); }).then(function (ctx) {
-        if (ctx && !c.choice) showBanner(false);
+      // first visit, or consent recorded under an outdated policy: always ask again
+      fetch(API_BASE + '/v1/consent-context').then(function (r) { return r.json(); }).then(function () {
+        showBanner(false);
       }).catch(function () { showBanner(false); });
     } else if (analyticsAllowed()) {
       window.RB.track('page_view');

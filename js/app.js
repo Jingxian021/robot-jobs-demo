@@ -530,7 +530,7 @@ const COMPANIES = [
   { name: 'Agility Robotics', location: 'Albany, United States', size: '200–500', careers: 'https://www.agilityrobotics.com/careers' },
   { name: 'Skydio', location: 'San Mateo, United States', size: '500+', careers: 'https://www.skydio.com/careers' },
   { name: 'Nuro', location: 'Mountain View, United States', size: '500+', careers: 'https://www.nuro.ai/careers' },
-  { name: 'Covariant', location: 'Berkeley, United States', size: '200–500', careers: 'https://covariant.ai/careers' },
+  { name: 'Covariant', location: 'Berkeley, United States', size: '200–500', careers: 'https://covariant.ai/' },
 ];
 
 const CURRENCIES = {
@@ -538,6 +538,10 @@ const CURRENCIES = {
 };
 
 function generateJobs(count = 24) {
+  // Deterministic PRNG: the same id must always resolve to the same posting,
+  // otherwise index/detail/saved/compare disagree on what "job-7" is.
+  let seed = 20261031;
+  const rnd = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296);
   const jobs = [];
   const titles = {
     'Mechanical Engineering': ['Senior Mechanical Engineer', 'Mechanism Designer', 'Actuator Engineer'],
@@ -559,29 +563,30 @@ function generateJobs(count = 24) {
   };
 
   for (let i = 0; i < count; i++) {
-    const category = POSITIONS[Math.floor(Math.random() * POSITIONS.length)];
-    const company = COMPANIES[Math.floor(Math.random() * COMPANIES.length)];
+    const category = POSITIONS[Math.floor(rnd() * POSITIONS.length)];
+    // Round-robin the first pass so every company (and every region) always has postings.
+    const company = i < COMPANIES.length ? COMPANIES[i] : COMPANIES[Math.floor(rnd() * COMPANIES.length)];
     const country = company.location.split(', ').pop();
     const currency = CURRENCIES[country] || 'USD';
     const yoeBands = ['0–2', '3–5', '6–10', '10+'];
-    const yoe = yoeBands[Math.floor(Math.random() * yoeBands.length)];
+    const yoe = yoeBands[Math.floor(rnd() * yoeBands.length)];
     const salaryMin = currency === 'CNY' ? 20000 : 80000;
     const salaryMax = currency === 'CNY' ? 80000 : 250000;
-    const salary = Math.floor(salaryMin + Math.random() * (salaryMax - salaryMin));
-    const salaryTop = Math.floor(salary * (1.2 + Math.random() * 0.6));
-    const postedDaysAgo = Math.floor(Math.random() * 60);
+    const salary = Math.floor(salaryMin + rnd() * (salaryMax - salaryMin));
+    const salaryTop = Math.floor(salary * (1.2 + rnd() * 0.6));
+    const postedDaysAgo = Math.floor(rnd() * 60);
     const posted = new Date();
     posted.setDate(posted.getDate() - postedDaysAgo);
-    const tagCount = 2 + Math.floor(Math.random() * 4);
+    const tagCount = 2 + Math.floor(rnd() * 4);
     const tags = [];
     while (tags.length < tagCount) {
-      const tag = TAGS_POOL[Math.floor(Math.random() * TAGS_POOL.length)];
+      const tag = TAGS_POOL[Math.floor(rnd() * TAGS_POOL.length)];
       if (!tags.includes(tag)) tags.push(tag);
     }
 
     jobs.push({
       id: `job-${i + 1}`,
-      title: titles[category][Math.floor(Math.random() * titles[category].length)],
+      title: titles[category][Math.floor(rnd() * titles[category].length)],
       company: company.name,
       location: company.location,
       country,
@@ -592,7 +597,7 @@ function generateJobs(count = 24) {
       posted: posted.toISOString().split('T')[0],
       postedDaysAgo,
       tags,
-      closed: Math.random() < 0.05,
+      closed: rnd() < 0.05,
       description: `Join the ${company.name} robotics team to advance next-generation autonomous systems. You will own core modules from design through production, collaborate with world-class researchers and engineers, and help ship hardware that operates in real-world environments.`,
       requirements: [
         `Bachelor's or Master's in relevant field`,
@@ -601,7 +606,7 @@ function generateJobs(count = 24) {
         `Experience with ${tags.slice(0, 2).join(' and ')}`,
         `Ability to work in fast-paced, cross-functional teams`,
       ],
-      applyUrl: `${company.careers}#job-${i + 1}`,
+      applyUrl: company.careers,
       verified: new Date(posted.getTime() + 2 * 86400000).toISOString().split('T')[0],
     });
   }
@@ -846,8 +851,7 @@ function initHome() {
   const locWrap = document.getElementById('filter-location');
   const locBtn = document.getElementById('filter-location-btn');
   const locPanel = document.getElementById('filter-location-panel');
-  const LOCATION_OPTIONS = Array.from(new Set(JOBS.map((j) => j.country)))
-    .filter((country) => country !== 'Switzerland')
+  const LOCATION_OPTIONS = Array.from(new Set(JOBS.map((j) => j.country)).add('Switzerland'))
     .sort();
 
   let filters = readFiltersFromURL();
@@ -1196,8 +1200,6 @@ function safeBack() {
 function initDetailBack() {
   const topBtn = document.getElementById('detail-back');
   topBtn?.addEventListener('click', safeBack);
-  const sideBtn = document.getElementById('sidebar-back');
-  sideBtn?.addEventListener('click', safeBack);
 }
 
 /* ── Saved page (local only) ──────────────────────────── */
