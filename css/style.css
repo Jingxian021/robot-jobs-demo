@@ -73,7 +73,9 @@ h1, h2, h3, h4 {
 }
 
 .section {
-  padding: var(--space-xl) 0;
+  /* vertical-only padding: keep .container's horizontal padding intact */
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
 }
 
 .divider {
