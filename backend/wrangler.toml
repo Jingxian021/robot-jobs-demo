@@ -27,7 +27,7 @@ RETENTION_DAYS = "365"
 [[d1_databases]]
 binding = "DB"
 database_name = "robot_works"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "12af6b3e-009b-441e-8a91-6d70989dddc7"
 
 [triggers]
 crons = ["0 3 * * *"]
